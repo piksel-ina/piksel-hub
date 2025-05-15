@@ -151,7 +151,7 @@ module "inbound_resolver_endpoint" {
   create_security_group              = true
   security_group_name                = "${var.project}-resolver-inbound-sg"
   security_group_description         = "Allow DNS queries to Inbound Resolver Endpoint for ${var.project}"
-  security_group_ingress_cidr_blocks = concat(var.spoke_vpc_cidrs, [var.vpc_cidr_block_shared])
+  security_group_ingress_cidr_blocks = concat([var.spoke_vpc_cidrs_dev], [var.vpc_cidr_block_shared])
 
   tags                = merge(local.tags, { Name = "${var.project}-inbound-resolver" })
   security_group_tags = merge(local.tags, { Name = "${var.project}-resolver-inbound-sg" })
