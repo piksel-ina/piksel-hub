@@ -10,3 +10,8 @@ publish_output "vpc_id_shared" {
   value       = deployment.shared.vpc_id
 }
 
+publish_output "zone_ids" {
+    description = "List of Route53 Hosted Zone IDs to associate with the VPC"
+    value       = deployment.shared.zone_ids
+}
+
