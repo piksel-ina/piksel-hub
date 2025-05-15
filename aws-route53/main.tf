@@ -187,7 +187,7 @@ module "outbound_resolver_endpoint" {
 
 # --- Authorization for VPC Association ---
 resource "aws_route53_vpc_association_authorization" "dev_vpc_authorization" {
-  zone_id    = module.zones.route53_zone_zone_id["${var.private_domain_name_dev}"]
+  zone_id    = module.zones.route53_zone_zone_id["${var.private_domain_name_hub}"]
   vpc_id     = var.vpc_id_dev
   depends_on = [module.zones]
 }

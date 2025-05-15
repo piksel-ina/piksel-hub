@@ -42,7 +42,7 @@ output "inbound_resolver_security_group_id" {
 }
 
 
-// Only include this output if the resolver rule is shared
+// Only include this output if outbound resolver endpoint is created
 # output "outbound_resolver_id" {
 #   description = "The ID of the Outbound Resolver Endpoint."
 #   value       = module.outbound_resolver_endpoint.route53_resolver_endpoint_id

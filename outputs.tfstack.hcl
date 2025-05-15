@@ -69,7 +69,7 @@ output "private_route_table_ids" {
   value       = component.vpc.private_route_table_ids
 }
 
-# Flow Logs Output
+# --- Flow Logs Outputs ---
 output "vpc_flow_log_id" {
   type        = string
   description = "ID of the VPC Flow Log (if enabled)"
@@ -80,4 +80,54 @@ output "vpc_flow_log_cloudwatch_iam_role_arn" {
   type        = string
   description = "ARN of the CloudWatch Log Group for Flow Logs (if enabled)"
   value       = component.vpc.vpc_flow_log_cloudwatch_iam_role_arn
+}
+
+# --- Route53 Zone Outputs ---
+output "zone_ids" {
+  description = "The ID of the public hosted zone"
+  value       = component.route53.zone_ids
+  type        = map(string)
+}
+
+output "zone_name_servers" {
+  description = "Name servers for the hosted zone"
+  value       = component.route53.zone_name_servers
+  type        = map(list(string))
+}
+
+output "zone_arn" {
+  description = "The ARN of the public hosted zone"
+  value       = component.route53.zone_arn
+  type        = map(string)
+}
+
+output "zone_name" {
+  description = "The name of the public hosted zone"
+  value       = component.route53.zone_name
+  type        = map(string)
+}
+
+# --- Resolver Outputs ---
+output "inbound_resolver_id" {
+  description = "The ID of the Inbound Resolver Endpoint."
+  value       = component.route53.inbound_resolver_id
+  type        = string
+}
+
+output "inbound_resolver_arn" {
+  description = "The ARN of the Inbound Resolver Endpoint."
+  value       = component.route53.inbound_resolver_arn
+  type        = string
+}
+
+output "inbound_resolver_ip_addresses" {
+  description = "IP Addresses of the Inbound Resolver Endpoint."
+  value       = component.route53.inbound_resolver_ip_addresses
+  type        = set(map(string))
+}
+
+output "inbound_resolver_security_group_id" {
+  description = "Security Group ID used by the Inbound Resolver Endpoint."
+  value       = component.route53.inbound_resolver_security_group_id
+  type        = list(string)
 }
