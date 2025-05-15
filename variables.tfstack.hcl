@@ -69,3 +69,40 @@ variable "flow_log_retention_days" {
   type        = number
   default     = 90
 }
+
+# --- Records Variables ---
+variable "enable_records_public" {
+  description = "Enable public DNS records for the main public zone"
+  type        = bool
+  default     = false
+}
+
+variable "enable_records_subdomain" {
+  description = "Enable public DNS records for the app subdomain"
+  type        = bool
+  default     = false
+}
+
+variable "enable_records_private_dev" {
+  description = "Enable private DNS records for the dev environment"
+  type        = bool
+  default     = false
+}
+
+variable "enable_records_private_prod" {
+  description = "Enable private DNS records for the dev environment"
+  type        = bool
+  default     = false
+}
+
+# --- Other Environment Variables ---
+variable "spoke_vpc_cidrs_dev" {
+  description = "values of spoke VPC CIDR blocks"
+  type        = string
+  default     = ""
+}
+
+variable "vpc_id_dev" {
+  description = "values of VPC ID for dev environment"
+  type        = string
+}

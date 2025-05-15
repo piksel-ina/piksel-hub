@@ -91,8 +91,8 @@ variable "vpc_cidr_block_shared" {
 
 variable "spoke_vpc_cidrs_dev" {
   description = "values of spoke VPC CIDR blocks"
-  type        = list(string)
-  default     = []
+  type        = string
+  default     = ""
 }
 
 variable "private_subnets" {

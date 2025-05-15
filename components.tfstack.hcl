@@ -18,3 +18,29 @@ component "vpc" {
     aws = provider.aws.configurations
   }
 }
+
+component "route53" {
+  source = "./aws-route53"
+
+  inputs = {
+    region                      = var.aws_region
+    project                     = var.project
+    environment                 = var.environment
+    vpc_id_shared               = component.vpc.vpc_id
+    vpc_cidr_block_shared       = component.vpc.vpc_cidr_block
+    private_subnets             = component.vpc.private_subnets
+    enable_records_public       = var.enable_records_public
+    enable_records_subdomain    = var.enable_records_subdomain
+    enable_records_private_dev  = var.enable_records_private_dev
+    enable_records_private_prod = var.enable_records_private_prod
+    spoke_vpc_cidrs_dev         = var.spoke_vpc_cidrs_dev
+    vpc_id_dev                  = var.vpc_id_dev
+    default_tags                = var.default_tags
+  }
+
+  providers = {
+    aws = provider.aws.configurations
+  }
+}
+
+

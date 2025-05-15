@@ -31,6 +31,13 @@ deployment "shared" {
     one_nat_gateway_per_az  = false
     enable_flow_log         = true
     flow_log_retention_days = 30
+    # --- Route53 Configuration ---
+    enable_records_public       = false
+    enable_records_subdomain    = false
+    enable_records_private_dev  = false
+    enable_records_private_prod = false
+    vpc_id_dev                  = upstream_input.infrastructure.vpc_id_dev
+    spoke_vpc_cidrs_dev         = upstream_input.infrastructure.vpc_cidr_dev
   }
 }
 
