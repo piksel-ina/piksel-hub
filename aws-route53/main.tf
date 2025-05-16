@@ -151,7 +151,7 @@ module "inbound_resolver_endpoint" {
   create_security_group              = true
   security_group_name                = "${var.project}-resolver-inbound-sg"
   security_group_description         = "Allow DNS queries to Inbound Resolver Endpoint for ${var.project}"
-  security_group_ingress_cidr_blocks = concat([var.spoke_vpc_cidrs_dev], [var.vpc_cidr_block_shared])
+  security_group_ingress_cidr_blocks = concat(var.spoke_vpc_cidrs, [var.vpc_cidr_block_shared])
   security_group_egress_cidr_blocks  = ["0.0.0.0/0"]
   
   tags                = merge(local.tags, { Name = "${var.project}-inbound-resolver" })
@@ -186,11 +186,4 @@ module "outbound_resolver_endpoint" {
 }
 
 
-# --- Authorization for VPC Association ---
-resource "aws_route53_vpc_association_authorization" "dev_vpc_authorization" {
-  zone_id    = module.zones.route53_zone_zone_id["${var.private_domain_name_hub}"]
-  vpc_id     = var.vpc_id_dev
-  depends_on = [module.zones]
-}
 
-// Add authorization for prod VPC association after prod vpc is created

@@ -96,13 +96,12 @@ variable "enable_records_private_prod" {
 }
 
 # --- Other Environment Variables ---
-variable "spoke_vpc_cidrs_dev" {
+variable "spoke_vpc_cidrs" {
   description = "values of spoke VPC CIDR blocks"
-  type        = string
-  default     = ""
+  type        = list(string)
 }
 
-variable "vpc_id_dev" {
-  description = "values of VPC ID for dev environment"
-  type        = string
+variable "spoke_vpc_ids" {
+  description = "values of spoke's VPC ID"
+  type        = list(string)
 }
