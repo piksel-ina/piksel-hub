@@ -40,7 +40,7 @@ deployment "shared" {
     enable_records_private_dev  = false
     enable_records_private_prod = false
     spoke_vpc_ids               = [upstream_input.infrastructure.vpc_id_dev]
-    spoke_vpc_cidrs             = [upstream_input.infrastructure.vpc_cidr_dev]
+    spoke_vpc_cidrs             = [upstream_input.infrastructure.vpc_cidr_dev, "10.2.0.0/16"]
   }
 }
 

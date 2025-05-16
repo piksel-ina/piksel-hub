@@ -138,3 +138,22 @@ output "authorization_ids" {
   value       = component.phz_vpc_authorization.authorization_ids
   type        = map(string)
 }
+
+# --- Transit Gateway Outputs ---
+output "transit_gateway_id" {
+  description = "The ID of the Transit Gateway"
+  value       = component.tgw.transit_gateway_id
+  type        = string
+}
+
+output "transit_gateway_arn" {
+  description = "The ARN of the Transit Gateway"
+  value       = component.tgw.transit_gateway_arn
+  type        = string
+}
+
+output "transit_gateway_vpc_attachment_ids" {
+  description = "List of Transit Gateway VPC Attachment identifiers"
+  value       = component.tgw.transit_gateway_vpc_attachment_ids
+  type        = list(string)
+}

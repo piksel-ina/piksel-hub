@@ -33,3 +33,8 @@ variable "private_subnets" {
   description = "values of private subnets"
   type        = list(string)
 }
+
+variable "spoke_vpc_cidrs" {
+  description = "List of spoke VPC CIDRs"
+  type        = list(string)
+}

@@ -2,6 +2,21 @@ locals {
   prefix         = "${lower(var.project)}-${lower(var.environment)}"
   ram_principals = values(var.account_ids)
   tags           = var.default_tags
+  destinations = [
+    for cidr in var.spoke_vpc_cidrs : {
+      destination_cidr_block = cidr
+    }
+  ]
+  hub_tgw_routes = concat(
+    local.destinations,
+    [
+      {
+        destination_cidr_block = "0.0.0.0/0"
+        blackhole              = true
+      }
+    ]
+  )
+
 }
 
 # --- Transit Gateway for VPC-to-VPC connectivity ---
@@ -24,16 +39,7 @@ module "tgw" {
       enable_default_route_table_association = false
       enable_default_route_table_propagation = false
 
-      tgw_routes = [
-        {
-          destination_cidr_block = var.vpc_cidr_block_shared
-        },
-        {
-          blackhole              = true
-          destination_cidr_block = "0.0.0.0/0"
-        }
-      ]
-      tags = { Name = "${local.prefix}-vpc-tgw-attachment" }
+      tgw_routes = local.hub_tgw_routes
     }
   }
 
