@@ -95,7 +95,7 @@ variable "enable_records_private_prod" {
   default     = false
 }
 
-# --- Other Environment Variables ---
+# --- Other Account/Environment Variables ---
 variable "spoke_vpc_cidrs" {
   description = "values of spoke VPC CIDR blocks"
   type        = list(string)
@@ -103,5 +103,10 @@ variable "spoke_vpc_cidrs" {
 
 variable "spoke_vpc_ids" {
   description = "values of spoke's VPC ID"
+  type        = list(string)
+}
+
+variable "account_ids" {
+  description = "Other Account's IDs "
   type        = list(string)
 }

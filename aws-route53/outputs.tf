@@ -7,7 +7,7 @@ output "zone_ids" {
 
 output "main_phz_id" {
   description = "The ID of main Private Hosted Zone"
-  value = module.zones.route53_zone_zone_id[var.private_domain_name_hub]
+  value       = module.zones.route53_zone_zone_id[var.private_domain_name_hub]
 }
 
 output "zone_name_servers" {

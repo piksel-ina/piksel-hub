@@ -32,6 +32,7 @@ deployment "shared" {
     enable_flow_log         = true
     flow_log_retention_days = 30
     # --- Route53 Configuration ---
+    account_ids                 = ["236122835646"]
     enable_records_public       = false
     enable_records_subdomain    = false
     enable_records_private_dev  = false

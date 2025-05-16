@@ -46,6 +46,8 @@ component "phz_vpc_authorization" {
   source = "./aws-route53-authorization"
 
   inputs = {
+    account_ids        = var.account_ids
+    default_tags       = var.default_tags
     spoke_vpc_ids      = var.spoke_vpc_ids
     authorization_zone = component.route53.main_phz_id
   }
