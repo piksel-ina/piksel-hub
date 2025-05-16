@@ -15,3 +15,7 @@ publish_output "zone_ids" {
   value       = deployment.shared.zone_ids
 }
 
+publish_output "transit_gateway_id" {
+  description = "Transit Gateway ID"
+  value       = deployment.shared.transit_gateway_id
+}
