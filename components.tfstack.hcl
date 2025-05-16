@@ -49,9 +49,9 @@ component "phz_vpc_authorization" {
 
   inputs = {
     account_ids        = var.account_ids
-    default_tags       = var.default_tags
     spoke_vpc_ids      = var.spoke_vpc_ids
     authorization_zone = component.route53.main_phz_id
+    default_tags       = var.default_tags
   }
 
   providers = {
@@ -61,3 +61,22 @@ component "phz_vpc_authorization" {
   depends_on = [component.route53]
 }
 
+component "tgw" {
+  source = "./aws-tgw"
+
+  inputs = {
+    project               = var.project
+    environment           = var.environment
+    vpc_id_shared         = component.vpc.vpc_id
+    vpc_cidr_block_shared = component.vpc.vpc_cidr_block
+    private_subnets       = component.vpc.private_subnets
+    account_ids           = var.account_ids
+    default_tags          = var.default_tags
+  }
+
+  providers = {
+    aws = provider.aws.configurations
+  }
+
+  depends_on = [component.vpc]
+}
