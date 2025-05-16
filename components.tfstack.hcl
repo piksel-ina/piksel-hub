@@ -65,14 +65,15 @@ component "tgw" {
   source = "./aws-tgw"
 
   inputs = {
-    project               = var.project
-    environment           = var.environment
-    vpc_id_shared         = component.vpc.vpc_id
-    vpc_cidr_block_shared = component.vpc.vpc_cidr_block
-    spoke_vpc_cidrs       = var.spoke_vpc_cidrs
-    private_subnets       = component.vpc.private_subnets
-    account_ids           = var.account_ids
-    default_tags          = var.default_tags
+    project                 = var.project
+    environment             = var.environment
+    vpc_id_shared           = component.vpc.vpc_id
+    vpc_cidr_block_shared   = component.vpc.vpc_cidr_block
+    spoke_vpc_cidrs         = var.spoke_vpc_cidrs
+    private_subnets         = component.vpc.private_subnets
+    account_ids             = var.account_ids
+    private_route_table_ids = component.vpc.private_route_table_ids
+    default_tags            = var.default_tags
   }
 
   providers = {

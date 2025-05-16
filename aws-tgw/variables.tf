@@ -38,3 +38,8 @@ variable "spoke_vpc_cidrs" {
   description = "List of spoke VPC CIDRs"
   type        = list(string)
 }
+
+variable "private_route_table_ids" {
+  description = "List of route table IDs"
+  type        = list(string)
+}

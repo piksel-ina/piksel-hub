@@ -50,3 +50,13 @@ module "tgw" {
     Name = "${local.prefix}-tgw"
   })
 }
+
+# --- VPC Route Table Update ---
+resource "aws_route" "hub_to_spoke_via_tgw" {
+  count                  = length(var.spoke_vpc_cidrs)
+  route_table_id         = var.private_route_table_ids[0]
+  destination_cidr_block = var.spoke_vpc_cidrs[count.index]
+  transit_gateway_id     = module.tgw.ec2_transit_gateway_id
+
+  depends_on = [module.tgw]
+}
