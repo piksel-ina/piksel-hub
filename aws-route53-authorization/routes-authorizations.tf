@@ -24,8 +24,8 @@ output "authorization_ids" {
 
 # --- Role to Allow Spoke VPC to Create Association with Hub VPC"
 resource "aws_iam_role" "this" {
-  for_each = toset(var.account_ids)
-  name     = "vpc_association_cross_account_role"
+  for_each = var.account_ids
+  name     = "vpc_association_cross_account_role_${each.key}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -35,8 +35,7 @@ resource "aws_iam_role" "this" {
         Principal = {
           "AWS" = "arn:aws:iam::${each.value}:root"
         },
-        "Action" : "route53:AssociateVPCWithHostedZone",
-        "Resource" : "arn:aws:route53:::hostedzone/*"
+        Action = "sts:AssumeRole"
       },
     ]
   })
@@ -44,9 +43,28 @@ resource "aws_iam_role" "this" {
   tags = var.default_tags
 }
 
+# --- Grants the role permission to associate VPCs with hosted zones ---
+resource "aws_iam_role_policy" "this" {
+  for_each = var.account_ids
+  name     = "vpc_association_policy_${each.key}"
+  role     = aws_iam_role.this[each.key].name
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = "route53:AssociateVPCWithHostedZone"
+        Resource = "arn:aws:route53:::hostedzone/${var.authorization_zone}"
+      }
+    ]
+  })
+}
+
+
 variable "account_ids" {
   description = "Account IDs to associate"
-  type        = list(string)
+  type        = map(string)
 }
 
 variable "default_tags" {

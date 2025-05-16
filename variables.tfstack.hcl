@@ -108,5 +108,5 @@ variable "spoke_vpc_ids" {
 
 variable "account_ids" {
   description = "Other Account's IDs "
-  type        = list(string)
+  type        = map(string)
 }
