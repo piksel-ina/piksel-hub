@@ -131,3 +131,10 @@ output "inbound_resolver_security_group_id" {
   value       = component.route53.inbound_resolver_security_group_id
   type        = list(string)
 }
+
+# --- Authorization Outputs ---
+output "authorization_ids" {
+  description = "The unique identifiers for the authorizations"
+  value       = component.phz_vpc_authorization.authorization_ids
+  type        = map(string)
+}

@@ -5,23 +5,6 @@ resource "aws_route53_vpc_association_authorization" "this" {
   zone_id  = var.authorization_zone
 }
 
-variable "spoke_vpc_ids" {
-  description = "List of spoke VPC IDs"
-  type        = list(string)
-  default     = [""]
-}
-
-variable "authorization_zone" {
-  description = "Zone on which VPCs will be authorized"
-  type        = string
-  default     = ""
-}
-
-output "authorization_ids" {
-  description = "The calculated unique identifiers for the association"
-  value       = { for k, v in aws_route53_vpc_association_authorization.this : k => v.id }
-}
-
 # --- Role to Allow Spoke VPC to Create Association with Hub VPC"
 resource "aws_iam_role" "this" {
   for_each = var.account_ids
@@ -61,14 +44,3 @@ resource "aws_iam_role_policy" "this" {
   })
 }
 
-
-variable "account_ids" {
-  description = "Account IDs to associate"
-  type        = map(string)
-}
-
-variable "default_tags" {
-  description = "Default tags to apply to all resources"
-  type        = map(string)
-  default     = {}
-}

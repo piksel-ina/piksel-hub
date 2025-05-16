@@ -40,6 +40,8 @@ component "route53" {
   providers = {
     aws = provider.aws.configurations
   }
+
+  depends_on = [component.vpc]
 }
 
 component "phz_vpc_authorization" {
@@ -56,5 +58,6 @@ component "phz_vpc_authorization" {
     aws = provider.aws.configurations
   }
 
+  depends_on = [component.route53]
 }
 
