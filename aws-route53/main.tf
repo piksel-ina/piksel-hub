@@ -111,7 +111,7 @@ module "records_public" {
 
   create     = var.enable_records_public
   zone_name  = var.domain_name
-  zone_id    = [for x in aws_route53_zone.this : x.zone_id if x.zone_id == var.domain_name][0]
+  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.domain_name]
   depends_on = [aws_route53_zone.this]
 
   records = var.public_records
@@ -124,7 +124,7 @@ module "records_subdomain" {
 
   create     = var.enable_records_subdomain
   zone_name  = var.subdomain_name
-  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.subdomain_name][0]
+  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.subdomain_name]
   depends_on = [aws_route53_zone.this]
 
   records = var.subdomain_records
@@ -137,7 +137,7 @@ module "records_private_main" {
 
   create     = var.enable_records_private_main
   zone_name  = var.private_domain_name_hub
-  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.private_domain_name_hub][0]
+  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_hub]
   depends_on = [aws_route53_zone.this]
 
   records = var.main_private_records
@@ -150,7 +150,7 @@ module "records_private_dev" {
 
   create     = var.enable_records_private_dev
   zone_name  = var.private_domain_name_dev
-  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.private_domain_name_dev][0]
+  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_dev]
   depends_on = [aws_route53_zone.this]
 
   records = var.dev_private_records
@@ -162,7 +162,7 @@ module "records_private_prod" {
 
   create     = var.enable_records_private_prod
   zone_name  = var.private_domain_name_prod
-  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.private_domain_name_prod][0]
+  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_prod]
   depends_on = [aws_route53_zone.this]
 
   records = var.prod_private_records
