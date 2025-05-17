@@ -30,6 +30,7 @@ component "route53" {
     vpc_cidr_block_shared       = component.vpc.vpc_cidr_block
     private_subnets             = component.vpc.private_subnets
     spoke_vpc_cidrs             = var.spoke_vpc_cidrs
+    account_ids                 = var.account_ids
     enable_records_public       = var.enable_records_public
     enable_records_subdomain    = var.enable_records_subdomain
     enable_records_private_main = var.enable_records_private_main
@@ -51,13 +52,18 @@ component "route53" {
   depends_on = [component.vpc]
 }
 
-component "phz_vpc_authorization" {
-  source = "./aws-route53-authorization"
+component "phz_vpc_associate" {
+  source = "./aws-route53-association"
+
+  for_each = {
+    1 = component.route53.zone_ids["piksel.internal"],
+    2 = component.route53.zone_ids["dev.piksel.internal"]
+  }
 
   inputs = {
     account_ids        = var.account_ids
     spoke_vpc_ids      = var.spoke_vpc_ids
-    authorization_zone = component.route53.main_phz_id
+    authorization_zone = each.value
     default_tags       = var.default_tags
   }
 

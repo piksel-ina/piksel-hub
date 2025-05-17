@@ -135,8 +135,14 @@ output "inbound_resolver_security_group_id" {
 # --- Authorization Outputs ---
 output "authorization_ids" {
   description = "The unique identifiers for the authorizations"
-  value       = component.phz_vpc_authorization.authorization_ids
-  type        = map(string)
+  value       = [for x in component.phz_vpc_associate : x.authorization_ids]
+  type        = list(map(string))
+}
+
+output "association_ids" {
+  description = "The unique identifiers for the authorizations"
+  value       = [for x in component.phz_vpc_associate : x.authorization_ids]
+  type        = list(map(string))
 }
 
 # --- Transit Gateway Outputs ---

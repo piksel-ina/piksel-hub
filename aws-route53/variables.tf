@@ -16,7 +16,6 @@ variable "environment" {
 }
 
 # --- Hostname Variables ---
-
 variable "domain_name" {
   type    = string
   default = "piksel.big.go.id"
@@ -47,8 +46,6 @@ variable "vpc_id_shared" {
 }
 
 # --- Records Variables ---
-
-
 variable "enable_records_public" {
   description = "Enable public DNS records for the main public zone"
   type        = bool

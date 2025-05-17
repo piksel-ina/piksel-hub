@@ -44,3 +44,11 @@ resource "aws_iam_role_policy" "this" {
   })
 }
 
+# --- Route53 Zone Association ---
+resource "aws_route53_zone_association" "this" {
+  for_each = toset(var.spoke_vpc_ids)
+  zone_id  = var.authorization_zone
+  vpc_id   = each.value
+
+  depends_on = [aws_route53_vpc_association_authorization.this, aws_iam_role.this, aws_iam_role_policy.this]
+}
