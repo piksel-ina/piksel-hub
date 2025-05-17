@@ -27,8 +27,6 @@ module "hub_sg" {
     }
   ]
 
-  egress_rules = ["all-all"]
-
   tags = var.default_tags
 }
 

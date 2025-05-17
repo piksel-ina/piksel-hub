@@ -157,3 +157,19 @@ output "transit_gateway_vpc_attachment_ids" {
   value       = component.tgw.transit_gateway_vpc_attachment_ids
   type        = list(string)
 }
+
+output security_group_metadata {
+  description = "Output the security group"
+  type = object({
+    arn         = string
+    id          = string
+    name        = string
+    description = string
+  })
+  value = {
+    arn         = component.security_group.security_group_arn
+    id          = component.security_group.security_group_id
+    name        = component.security_group.security_group_name
+    description = component.security_group.security_group_description
+  }
+}

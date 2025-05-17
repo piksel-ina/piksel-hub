@@ -6,7 +6,7 @@ variable "default_tags" {
 }
 
 variable "vpc_id_shared" {
-  description = "The ID of the VPC to associate with the resolver rule"
+  description = "The ID of the VPC to associate with the security group"
   type        = string
 }
 
