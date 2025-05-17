@@ -139,12 +139,6 @@ output "authorization_ids" {
   type        = list(map(string))
 }
 
-output "association_ids" {
-  description = "The unique identifiers for the authorizations"
-  value       = [for x in component.phz_vpc_associate : x.authorization_ids]
-  type        = list(map(string))
-}
-
 # --- Transit Gateway Outputs ---
 output "transit_gateway_id" {
   description = "The ID of the Transit Gateway"
