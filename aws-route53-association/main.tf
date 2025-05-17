@@ -8,7 +8,7 @@ resource "aws_route53_vpc_association_authorization" "this" {
 # --- Role to Allow Spoke VPC to Create Association with Hub VPC"
 resource "aws_iam_role" "this" {
   for_each = var.account_ids
-  name     = "vpc_association_cross_account_role_${each.key}"
+  name     = "cross_account_role_${each.key}_with_${var.authorization_zone}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
