@@ -95,9 +95,9 @@ output "zone_name_servers" {
   type        = map(list(string))
 }
 
-output "zone_arn" {
+output "zone_arns" {
   description = "The ARN of the public hosted zone"
-  value       = component.route53.zone_arn
+  value       = component.route53.zone_arns
   type        = map(string)
 }
 

@@ -104,17 +104,6 @@ resource "aws_route53_zone" "this" {
 
 }
 
-
-
-module "zones" {
-  source  = "terraform-aws-modules/route53/aws//modules/zones"
-  version = "~> 5.0"
-
-  zones = local.zones_config
-
-  tags = local.tags
-}
-
 # --- Records for main public zones ---
 module "records_public" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
@@ -122,8 +111,8 @@ module "records_public" {
 
   create     = var.enable_records_public
   zone_name  = var.domain_name
-  zone_id    = module.zones.route53_zone_zone_id[var.domain_name]
-  depends_on = [module.zones]
+  zone_id    = [for x in aws_route53_zone.this : x.zone_id if x.zone_id == var.domain_name][0]
+  depends_on = [aws_route53_zone.this]
 
   records = var.public_records
 }
@@ -135,8 +124,8 @@ module "records_subdomain" {
 
   create     = var.enable_records_subdomain
   zone_name  = var.subdomain_name
-  zone_id    = module.zones.route53_zone_zone_id[var.subdomain_name]
-  depends_on = [module.zones]
+  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.subdomain_name][0]
+  depends_on = [aws_route53_zone.this]
 
   records = var.subdomain_records
 }
@@ -148,8 +137,8 @@ module "records_private_main" {
 
   create     = var.enable_records_private_main
   zone_name  = var.private_domain_name_hub
-  zone_id    = module.zones.route53_zone_zone_id[var.private_domain_name_hub]
-  depends_on = [module.zones]
+  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.private_domain_name_hub][0]
+  depends_on = [aws_route53_zone.this]
 
   records = var.main_private_records
 }
@@ -161,8 +150,8 @@ module "records_private_dev" {
 
   create     = var.enable_records_private_dev
   zone_name  = var.private_domain_name_dev
-  zone_id    = module.zones.route53_zone_zone_id[var.private_domain_name_dev]
-  depends_on = [module.zones]
+  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.private_domain_name_dev][0]
+  depends_on = [aws_route53_zone.this]
 
   records = var.dev_private_records
 }
@@ -173,12 +162,11 @@ module "records_private_prod" {
 
   create     = var.enable_records_private_prod
   zone_name  = var.private_domain_name_prod
-  zone_id    = module.zones.route53_zone_zone_id[var.private_domain_name_prod]
-  depends_on = [module.zones]
+  zone_id    = [for x in aws_route53_zone.this : x.id if x.id == var.private_domain_name_prod][0]
+  depends_on = [aws_route53_zone.this]
 
   records = var.prod_private_records
 }
-
 
 # --- INBOUND RESOLVER ENDPOINT ---
 module "inbound_resolver_endpoint" {

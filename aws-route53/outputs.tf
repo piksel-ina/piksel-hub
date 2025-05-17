@@ -1,28 +1,28 @@
 
-# --- public zone outputs ---
+# --- Zone outputs ---
 output "zone_ids" {
-  description = "The ID of the public hosted zone"
-  value       = module.zones.route53_zone_zone_id
+  description = "Zone ID of Route53 zone"
+  value       = { for k, v in aws_route53_zone.this : k => v.zone_id }
 }
 
-output "main_phz_id" {
-  description = "The ID of main Private Hosted Zone"
-  value       = module.zones.route53_zone_zone_id[var.private_domain_name_hub]
+output "zone_arns" {
+  description = "Zone ARN of Route53 zone"
+  value       = { for k, v in aws_route53_zone.this : k => v.arn }
 }
 
 output "zone_name_servers" {
-  description = "Name servers for the hosted zone"
-  value       = module.zones.route53_zone_name_servers
+  description = "Name servers of Route53 zone"
+  value       = { for k, v in aws_route53_zone.this : k => v.name_servers }
 }
 
-output "zone_arn" {
-  description = "The ARN of the public hosted zone"
-  value       = module.zones.route53_zone_zone_arn
+output "primary_name_server" {
+  description = "The Route 53 name server that created the SOA record."
+  value       = { for k, v in aws_route53_zone.this : k => v.primary_name_server }
 }
 
 output "zone_name" {
-  description = "The name of the public hosted zone"
-  value       = module.zones.route53_zone_name
+  description = "Name of Route53 zone"
+  value       = { for k, v in aws_route53_zone.this : k => v.name }
 }
 
 # --- Resolver Outputs ---
@@ -46,19 +46,3 @@ output "inbound_resolver_security_group_id" {
   value       = module.inbound_resolver_endpoint.route53_resolver_endpoint_security_group_ids
 }
 
-
-// Only include this output if outbound resolver endpoint is created
-# output "outbound_resolver_id" {
-#   description = "The ID of the Outbound Resolver Endpoint."
-#   value       = module.outbound_resolver_endpoint.route53_resolver_endpoint_id
-# }
-
-# output "outbound_resolver_ip_addresses" {
-#   description = "IP Addresses of the Outbound Resolver Endpoint."
-#   value       = module.outbound_resolver_endpoint.route53_resolver_endpoint_ip_addresses
-# }
-
-# output "outbound_resolver_security_group_id" {
-#   description = "Security Group ID used by the Outbound Resolver Endpoint."
-#   value       = module.outbound_resolver_endpoint.route53_resolver_endpoint_security_group_ids
-# }

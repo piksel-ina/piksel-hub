@@ -3,7 +3,7 @@ locals {
   subdomain_records = []
   main_private_records = [
     {
-      name    = "test_record_main"
+      name    = "test"
       type    = "A"
       ttl     = 300
       records = ["10.0.16.200"]
@@ -11,7 +11,7 @@ locals {
   ]
   dev_private_records = [
     {
-      name    = "test_record_dev"
+      name    = "test"
       type    = "A"
       ttl     = 300
       records = ["10.1.16.200"]
