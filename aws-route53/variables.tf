@@ -47,6 +47,8 @@ variable "vpc_id_shared" {
 }
 
 # --- Records Variables ---
+
+
 variable "enable_records_public" {
   description = "Enable public DNS records for the main public zone"
   type        = bool
@@ -55,6 +57,12 @@ variable "enable_records_public" {
 
 variable "enable_records_subdomain" {
   description = "Enable public DNS records for the app subdomain"
+  type        = bool
+  default     = false
+}
+
+variable "enable_records_private_main" {
+  description = "Enable public DNS records for the main private zone"
   type        = bool
   default     = false
 }
@@ -69,6 +77,61 @@ variable "enable_records_private_prod" {
   description = "Enable private DNS records for the dev environment"
   type        = bool
   default     = false
+}
+
+variable "public_records" {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable "subdomain_records" {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable "main_private_records" {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable "dev_private_records" {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable "prod_private_records" {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
 }
 
 # --- Inbound and Outbound Rules Variables ---
@@ -100,4 +163,3 @@ variable "spoke_vpc_cidrs" {
   type        = list(string)
   default     = [""]
 }
-

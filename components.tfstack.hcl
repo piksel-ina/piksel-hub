@@ -32,10 +32,17 @@ component "route53" {
     spoke_vpc_cidrs             = var.spoke_vpc_cidrs
     enable_records_public       = var.enable_records_public
     enable_records_subdomain    = var.enable_records_subdomain
+    enable_records_private_main = var.enable_records_private_main
     enable_records_private_dev  = var.enable_records_private_dev
     enable_records_private_prod = var.enable_records_private_prod
     default_tags                = var.default_tags
+    public_records              = var.public_records
+    subdomain_records           = var.subdomain_records
+    main_private_records        = var.main_private_records
+    dev_private_records         = var.dev_private_records
+    prod_private_records        = var.prod_private_records
   }
+
 
   providers = {
     aws = provider.aws.configurations

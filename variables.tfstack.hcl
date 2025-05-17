@@ -83,6 +83,12 @@ variable "enable_records_subdomain" {
   default     = false
 }
 
+variable "enable_records_private_main" {
+  description = "Enable public DNS records for the main private zone"
+  type        = bool
+  default     = false
+}
+
 variable "enable_records_private_dev" {
   description = "Enable private DNS records for the dev environment"
   type        = bool
@@ -109,4 +115,60 @@ variable "spoke_vpc_ids" {
 variable "account_ids" {
   description = "Other Account's IDs "
   type        = map(string)
+}
+
+# --- Hosted Zones Records Variables ---
+variable public_records {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable subdomain_records {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable main_private_records {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable dev_private_records {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
+}
+
+variable prod_private_records {
+  description = "Public DNS records for the main public zone"
+  type = list(object({
+    name    = string
+    type    = string
+    ttl     = number
+    records = list(string)
+  }))
+  default = []
 }

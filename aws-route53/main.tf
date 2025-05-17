@@ -81,9 +81,10 @@ module "records_public" {
 
   create     = var.enable_records_public
   zone_name  = var.domain_name
+  zone_id    = module.zones.route53_zone_zone_id[var.domain_name]
   depends_on = [module.zones]
 
-  records = []
+  records = var.public_records
 }
 
 # --- Records for subdomain public zones ---
@@ -93,9 +94,23 @@ module "records_subdomain" {
 
   create     = var.enable_records_subdomain
   zone_name  = var.subdomain_name
+  zone_id    = module.zones.route53_zone_zone_id[var.subdomain_name]
   depends_on = [module.zones]
 
-  records = []
+  records = var.subdomain_records
+}
+
+# --- Records for subdomain public zones ---
+module "records_private_main" {
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 5.0"
+
+  create     = var.enable_records_private_main
+  zone_name  = var.private_domain_name_hub
+  zone_id    = module.zones.route53_zone_zone_id[var.private_domain_name_hub]
+  depends_on = [module.zones]
+
+  records = var.main_private_records
 }
 
 # --- Records for private zones ---
@@ -105,16 +120,10 @@ module "records_private_dev" {
 
   create     = var.enable_records_private_dev
   zone_name  = var.private_domain_name_dev
+  zone_id    = module.zones.route53_zone_zone_id[var.private_domain_name_dev]
   depends_on = [module.zones]
 
-  records = [
-    # {
-    #     name    = "db.dev.piksel.internal"
-    #     type    = "CNAME"
-    #     ttl     = "300"
-    #     records = [local.dev_odc_rds_address]
-    # }
-  ]
+  records = var.dev_private_records
 }
 
 module "records_private_prod" {
@@ -123,9 +132,10 @@ module "records_private_prod" {
 
   create     = var.enable_records_private_prod
   zone_name  = var.private_domain_name_prod
+  zone_id    = module.zones.route53_zone_zone_id[var.private_domain_name_prod]
   depends_on = [module.zones]
 
-  records = []
+  records = var.prod_private_records
 }
 
 

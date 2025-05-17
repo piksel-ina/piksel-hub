@@ -33,8 +33,14 @@ deployment "shared" {
     }
     enable_records_public       = false
     enable_records_subdomain    = false
-    enable_records_private_dev  = false
+    enable_records_private_main = true
+    enable_records_private_dev  = true
     enable_records_private_prod = false
+    public_records              = local.public_records
+    subdomain_records           = local.subdomain_records
+    main_private_records        = local.main_private_records
+    dev_private_records         = local.dev_private_records
+    prod_private_records        = local.prod_private_records
     spoke_vpc_ids               = [upstream_input.infrastructure.vpc_id_dev]
     spoke_vpc_cidrs             = [upstream_input.infrastructure.vpc_cidr_dev, "10.2.0.0/16"]
   }
