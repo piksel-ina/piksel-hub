@@ -16,22 +16,18 @@ identity_token "aws" {
 # --- Deployment for Shared Account ---
 deployment "shared" {
   inputs = {
-    # --- General Configuration ---
-    aws_region   = local.region
-    project      = local.project
-    environment  = "Shared"
-    default_tags = merge(local.common_tags, { "Environment" = "Shared" })
-    # --- Authentication ---
-    aws_role  = "arn:aws:iam::686410905891:role/stacks-piksel-ina-piksel-ina"
-    aws_token = identity_token.aws.jwt
-    # --- VPC Configuration ---
+    aws_region              = local.region
+    project                 = local.project
+    environment             = "Shared"
+    default_tags            = merge(local.common_tags, { "Environment" = "Shared" })
+    aws_role                = "arn:aws:iam::686410905891:role/stacks-piksel-ina-piksel-ina"
+    aws_token               = identity_token.aws.jwt
     vpc_cidr                = "10.0.0.0/16"
     az_count                = "3"
     single_nat_gateway      = true
     one_nat_gateway_per_az  = false
     enable_flow_log         = true
     flow_log_retention_days = 30
-    # --- Route53 Configuration ---
     account_ids = {
       "dev_account" = "236122835646"
     }
@@ -44,7 +40,7 @@ deployment "shared" {
   }
 }
 
-# --- Auto-approve plans for shared and dev---
+# --- Auto-approve plans for shared ---
 orchestrate "auto_approve" "safe_plan_shared" {
   check {
     condition = context.plan.deployment == deployment.shared

@@ -82,3 +82,20 @@ component "tgw" {
 
   depends_on = [component.vpc]
 }
+
+component "security_group" {
+  source = "./aws-security-group"
+
+  inputs = {
+    vpc_id_shared   = component.vpc.vpc_id
+    vpc_cidr        = component.vpc.vpc_cidr_block
+    spoke_vpc_cidrs = var.spoke_vpc_cidrs
+    default_tags    = var.default_tags
+  }
+
+  providers = {
+    aws = provider.aws.configurations
+  }
+
+  depends_on = [component.vpc]
+}
