@@ -86,7 +86,6 @@ component "tgw" {
     private_subnets         = component.vpc.private_subnets
     account_ids             = var.account_ids
     private_route_table_ids = component.vpc.private_route_table_ids
-    default_tags            = var.default_tags
   }
 
   providers = {

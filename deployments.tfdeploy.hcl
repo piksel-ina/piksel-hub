@@ -1,6 +1,6 @@
 locals {
   common_tags = {
-    "ManagedBy" = "Terraform"
+    "Terraform" = true
     "Project"   = "Piksel"
     "Service"   = "piksel.big.go.id"
     "Owner"     = "Piksel-Devops-Team"
