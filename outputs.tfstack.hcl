@@ -194,3 +194,12 @@ output "ecr_role" {
   }
 }
 
+output "ecr_endpoints" {
+  description = "Details of the ECR VPC Endpoints"
+  type = map(object({
+    id          = string
+    dns_entries = list(map(string))
+    description = string
+  }))
+  value = component.ecr.ecr_endpoints
+}
