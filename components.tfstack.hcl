@@ -116,10 +116,15 @@ component "ecr" {
   source = "./aws-ecr"
 
   inputs = {
-    project            = var.project
-    current_account_id = component.vpc.account_id
-    account_ids        = var.account_ids
-    default_tags       = var.default_tags
+    region                  = var.aws_region
+    project                 = var.project
+    current_account_id      = component.vpc.account_id
+    account_ids             = var.account_ids
+    ecr_endpoint_sg_id      = component.security_group.security_groups["ecr-endpoint-sg"]["id"]
+    vpc_id_shared           = component.vpc.vpc_id
+    private_subnet_ids      = component.vpc.private_subnets
+    private_route_table_ids = component.vpc.private_route_table_ids
+    default_tags            = var.default_tags
   }
 
   providers = {
@@ -128,3 +133,4 @@ component "ecr" {
 
   depends_on = [component.tgw, component.phz_vpc_associate]
 }
+
