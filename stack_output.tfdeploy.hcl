@@ -13,3 +13,18 @@ publish_output "transit_gateway_id" {
   description = "Transit Gateway ID"
   value       = deployment.shared.transit_gateway_id
 }
+
+publish_output "ecr_arn" {
+  description = "ECR arn"
+  value       = deployment.shared.ecr["arn"]
+}
+
+publish_output "ecr_url" {
+  description = "ECR arn"
+  value       = deployment.shared.ecr["url"]
+}
+
+publish_output "eks_ecr_role" {
+  description = "ARN of the IAM role for EKS ECR access"
+  value       = deployment.shared.ecr_role["eks_role_arn"]
+}
