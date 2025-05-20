@@ -111,3 +111,20 @@ component "security_group" {
 
   depends_on = [component.vpc]
 }
+
+component "ecr" {
+  source = "./aws-ecr"
+
+  inputs = {
+    project            = var.project
+    current_account_id = component.vpc.account_id
+    account_ids        = var.account_ids
+    default_tags       = var.default_tags
+  }
+
+  providers = {
+    aws = provider.aws.configurations
+  }
+
+  depends_on = [component.tgw, component.phz_vpc_associate]
+}

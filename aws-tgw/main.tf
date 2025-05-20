@@ -1,9 +1,9 @@
 locals {
   prefix         = "${lower(var.project)}-${lower(var.environment)}"
   ram_principals = values(var.account_ids)
-  tags           = {
+  tags = {
     "Terraform" = true
-    "Project" = "Piksel"
+    "Project"   = "Piksel"
   }
   blackhole_route = {
     destination_cidr_block = "0.0.0.0/0"
