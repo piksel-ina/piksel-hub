@@ -28,3 +28,8 @@ publish_output "eks_ecr_role" {
   description = "ARN of the IAM role for EKS ECR access"
   value       = deployment.shared.ecr_role["eks_role_arn"]
 }
+
+publish_output "inbound_resolver_ips" {
+  description = "List of Inbound Resolver Endpoint IPs"
+  value       = deployment.shared.inbound_resolver_ip_addresses[*].ip
+}
