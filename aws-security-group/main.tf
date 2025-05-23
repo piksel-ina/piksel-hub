@@ -24,20 +24,6 @@ module "hub_sg" {
       protocol    = "tcp"
       description = "Allow DNS TCP from spoke VPCs"
       cidr_blocks = join(",", var.spoke_vpc_cidrs)
-    },
-    {
-      from_port   = -1
-      to_port     = -1
-      protocol    = "icmp"
-      description = "Allow ICMP (ping) from spoke VPCs"
-      cidr_blocks = join(",", var.spoke_vpc_cidrs)
-    },
-    {
-      from_port   = 80
-      to_port     = 80
-      protocol    = "tcp"
-      description = "Allow HTTP from spoke VPCs"
-      cidr_blocks = join(",", var.spoke_vpc_cidrs)
     }
   ]
 
