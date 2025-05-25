@@ -22,7 +22,7 @@ variable "default_tags" {
 variable "github-org" {
   description = "The Name of Github Organization to give permission on ECR access"
   type        = string
-  default     = "piksel"
+  default     = "piksel-ina"
 }
 
 variable "github-repo" {

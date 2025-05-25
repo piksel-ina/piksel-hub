@@ -135,6 +135,13 @@ resource "aws_iam_policy" "github_actions" {
       {
         Effect = "Allow"
         Action = [
+          "ecr:GetAuthorizationToken"
+        ]
+        Resource = "*"
+      },
+      {
+        Effect = "Allow"
+        Action = [
           "ecr:GetDownloadUrlForLayer",
           "ecr:BatchGetImage",
           "ecr:BatchCheckLayerAvailability",
@@ -144,8 +151,7 @@ resource "aws_iam_policy" "github_actions" {
           "ecr:CompleteLayerUpload",
           "ecr:DescribeRepositories",
           "ecr:ListImages",
-          "ecr:DescribeImages",
-          "ecr:GetAuthorizationToken"
+          "ecr:DescribeImages"
         ]
         Resource = aws_ecr_repository.this.arn
       }
