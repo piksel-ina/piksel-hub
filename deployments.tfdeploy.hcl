@@ -41,8 +41,8 @@ deployment "shared" {
     main_private_records        = local.main_private_records
     dev_private_records         = local.dev_private_records
     prod_private_records        = local.prod_private_records
-    spoke_vpc_ids               = [""]
-    spoke_vpc_cidrs             = [""]
+    spoke_vpc_ids               = ["vpc-0389be1a69d34ee5a"]
+    spoke_vpc_cidrs             = ["10.1.0.0/16"]
   }
 }
 
