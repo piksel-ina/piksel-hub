@@ -21,20 +21,35 @@ resource "aws_ecr_lifecycle_policy" "this" {
   policy = jsonencode({
     rules = [
       {
-        rulePriority = 1
-        description  = "Keep only last 5 tagged images"
+        "rulePriority" : 1,
+        "description" : "Keep last 15 production (vX.Y.Z) and recent staging (vX.Y.Z-betaN) images",
+        "selection" : {
+          "tagStatus" : "tagged",
+          "tagPrefixList" : ["v"],
+          "countType" : "imageCountMoreThan",
+          "countNumber" : 15
+        },
+        "action" : {
+          "type" : "expire"
+        }
+      },
+      {
+        rulePriority = 2
+        description  = "Expire dev branch images (e.g., feature-*-latest, develop-latest) not updated in 45 days"
         selection = {
           tagStatus     = "tagged"
-          tagPrefixList = ["v", "release"],
-          countType     = "imageCountMoreThan"
-          countNumber   = 5
+          tagPrefixList = ["feature-", "develop-", "main-", "dev-"],
+          countType     = "sinceImagePushed",
+          countUnit     = "days",
+          countNumber   = 45
         }
         action = {
           type = "expire"
         }
       },
+
       {
-        rulePriority = 2
+        rulePriority = 10
         description  = "Expire untagged images older than 7 days"
         selection = {
           tagStatus   = "untagged"
