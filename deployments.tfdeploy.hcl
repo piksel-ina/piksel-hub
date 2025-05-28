@@ -5,8 +5,9 @@ locals {
     "Service"   = "piksel.big.go.id"
     "Owner"     = "Piksel-Devops-Team"
   }
-  region  = "ap-southeast-3"
-  project = "Piksel"
+  region      = "ap-southeast-3"
+  project     = "Piksel"
+  dev_account = "236122835646"
 }
 
 identity_token "aws" {
@@ -29,7 +30,7 @@ deployment "shared" {
     enable_flow_log         = true
     flow_log_retention_days = 30
     account_ids = {
-      "dev_account" = "236122835646"
+      "dev_account" = local.dev_account
     }
     enable_records_public       = false
     enable_records_subdomain    = false
@@ -43,6 +44,16 @@ deployment "shared" {
     prod_private_records        = local.prod_private_records
     spoke_vpc_ids               = ["vpc-0895c52245cda57ec"]
     spoke_vpc_cidrs             = ["10.1.0.0/16"]
+    externaldns_configs = [
+      {
+        env                  = "dev"
+        account_id           = local.dev_account
+        oidc_provider_url    = "https://oidc.eks.ap-southeast-3.amazonaws.com/id/16FD8104D1222A76F1B32AFED808D9BF"
+        namespace            = "aws-external-dns-helm"
+        service_account_name = "externaldns"
+        hosted_zone_names    = ["dev.piksel.big.go.id", "dev.piksel.internal"]
+      }
+    ]
   }
 }
 

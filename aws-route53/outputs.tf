@@ -46,8 +46,3 @@ output "inbound_resolver_security_group_id" {
   value       = module.inbound_resolver_endpoint.route53_resolver_endpoint_security_group_ids
 }
 
-# --- Cross Account Role ---
-output "externaldns_crossaccount_role_arns" {
-  value = { for k, v in aws_iam_role.externaldns_crossaccount : k => v.arn }
-}
-

@@ -13,10 +13,10 @@ locals {
       }
     }
 
-    "${var.subdomain_name}" = {
-      comment = "Public zone for ${var.subdomain_name}"
+    "${var.subdomain_name_dev}" = {
+      comment = "Public zone for ${var.subdomain_name_dev}"
       tags = {
-        Name = var.subdomain_name
+        Name = var.subdomain_name_dev
       }
     }
 
@@ -123,8 +123,8 @@ module "records_subdomain" {
   version = "~> 5.0"
 
   create     = var.enable_records_subdomain
-  zone_name  = var.subdomain_name
-  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.subdomain_name]
+  zone_name  = var.subdomain_name_dev
+  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.subdomain_name_dev]
   depends_on = [aws_route53_zone.this]
 
   records = var.subdomain_records
@@ -222,38 +222,5 @@ module "outbound_resolver_endpoint" {
 
   tags                = merge(local.tags, { Name = "${local.prefix}-outbound-resolver" })
   security_group_tags = merge(local.tags, { Name = "${local.prefix}-resolver-outbound-sg" })
-}
-
-# --- Cross Account Access for External DNS ---
-resource "aws_iam_role" "externaldns_crossaccount" {
-  for_each = { for v in var.externaldns_trusted_accounts : v.env => v }
-
-  name = "externaldns-crossaccount-role-${each.key}"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Effect = "Allow"
-        Principal = {
-          Federated = "arn:aws:iam::${each.value.account_id}:oidc-provider/${replace(each.value.oidc_provider_url, "https://", "")}"
-        }
-        Action = "sts:AssumeRoleWithWebIdentity"
-        Condition = {
-          StringEquals = {
-            "${replace(each.value.oidc_provider_url, "https://", "")}:sub" = "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}"
-          }
-        }
-      }
-    ]
-  })
-}
-
-# --- Attach policy ---
-resource "aws_iam_role_policy_attachment" "externaldns_crossaccount_attach" {
-  for_each = aws_iam_role.externaldns_crossaccount
-
-  role       = each.value.name
-  policy_arn = aws_iam_policy.externaldns_route53.arn
 }
 

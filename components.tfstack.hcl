@@ -23,25 +23,26 @@ component "route53" {
   source = "./aws-route53"
 
   inputs = {
-    region                      = var.aws_region
-    project                     = var.project
-    environment                 = var.environment
-    vpc_id_shared               = component.vpc.vpc_id
-    vpc_cidr_block_shared       = component.vpc.vpc_cidr_block
-    private_subnets             = component.vpc.private_subnets
-    spoke_vpc_cidrs             = var.spoke_vpc_cidrs
-    account_ids                 = var.account_ids
-    enable_records_public       = var.enable_records_public
-    enable_records_subdomain    = var.enable_records_subdomain
-    enable_records_private_main = var.enable_records_private_main
-    enable_records_private_dev  = var.enable_records_private_dev
-    enable_records_private_prod = var.enable_records_private_prod
-    default_tags                = var.default_tags
-    public_records              = var.public_records
-    subdomain_records           = var.subdomain_records
-    main_private_records        = var.main_private_records
-    dev_private_records         = var.dev_private_records
-    prod_private_records        = var.prod_private_records
+    region                       = var.aws_region
+    project                      = var.project
+    environment                  = var.environment
+    vpc_id_shared                = component.vpc.vpc_id
+    vpc_cidr_block_shared        = component.vpc.vpc_cidr_block
+    private_subnets              = component.vpc.private_subnets
+    spoke_vpc_cidrs              = var.spoke_vpc_cidrs
+    account_ids                  = var.account_ids
+    enable_records_public        = var.enable_records_public
+    enable_records_subdomain     = var.enable_records_subdomain
+    enable_records_private_main  = var.enable_records_private_main
+    enable_records_private_dev   = var.enable_records_private_dev
+    enable_records_private_prod  = var.enable_records_private_prod
+    default_tags                 = var.default_tags
+    public_records               = var.public_records
+    subdomain_records            = var.subdomain_records
+    main_private_records         = var.main_private_records
+    dev_private_records          = var.dev_private_records
+    prod_private_records         = var.prod_private_records
+    externaldns_trusted_accounts = var.externaldns_configs
   }
 
 

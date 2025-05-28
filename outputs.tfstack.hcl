@@ -203,3 +203,15 @@ output "ecr_endpoints" {
   }))
   value = component.ecr.ecr_endpoints
 }
+
+output "externaldns_crossaccount_role_arns" {
+  description = "Map of environment to ExternalDNS cross-account IAM role ARNs"
+  type = map(string)
+  value = component.route53.externaldns_crossaccount_role_arns
+}
+
+output "externaldns_route53_policy_arns" {
+  description = "Map of environment to ExternalDNS Route53 policy ARNs"
+  type = map(string)
+  value = component.route53.externaldns_route53_policy_arns
+}

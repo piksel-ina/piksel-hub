@@ -21,9 +21,9 @@ variable "domain_name" {
   default = "piksel.big.go.id"
 }
 
-variable "subdomain_name" {
+variable "subdomain_name_dev" {
   type    = string
-  default = "app.piksel.big.go.id"
+  default = "dev.piksel.big.go.id"
 }
 
 variable "private_domain_name_hub" {
@@ -169,5 +169,6 @@ variable "externaldns_trusted_accounts" {
     oidc_provider_url    = string
     namespace            = string
     service_account_name = string
+    hosted_zone_names    = list(string)
   }))
 }

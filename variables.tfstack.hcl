@@ -172,3 +172,16 @@ variable prod_private_records {
   }))
   default = []
 }
+
+
+variable "externaldns_configs" {
+  description = "List of trusted accounts and their OIDC details for ExternalDNS cross-account access"
+  type = list(object({
+    env                  = string
+    account_id           = string
+    oidc_provider_url    = string
+    namespace            = string
+    service_account_name = string
+    hosted_zone_names    = list(string)
+  }))
+}
