@@ -33,3 +33,13 @@ publish_output "inbound_resolver_ips" {
   description = "List of Inbound Resolver Endpoint IPs"
   value       = deployment.shared.inbound_resolver_ip_addresses[*].ip
 }
+
+publish_output "externaldns_crossaccount_role_arns" {
+  description = "Map of environment to ExternalDNS cross-account IAM role ARNs"
+  value = deployment.shared.externaldns_crossaccount_role_arns
+}
+
+publish_output "externaldns_route53_policy_arns" {
+  description = "Map of environment to ExternalDNS Route53 policy ARNs"
+  value = deployment.shared.externaldns_route53_policy_arns
+}
