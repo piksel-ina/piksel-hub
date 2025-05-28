@@ -160,3 +160,14 @@ variable "spoke_vpc_cidrs" {
   type        = list(string)
   default     = [""]
 }
+
+variable "externaldns_trusted_accounts" {
+  description = "List of trusted accounts and their OIDC details for ExternalDNS cross-account access"
+  type = list(object({
+    env                  = string
+    account_id           = string
+    oidc_provider_url    = string
+    namespace            = string
+    service_account_name = string
+  }))
+}
