@@ -46,29 +46,21 @@ resource "aws_iam_policy" "cross_account_route53_policy" {
 
   policy = jsonencode({
     Version = "2012-10-17"
-    Statement = concat(
-      [
-        for zone_id in each.value : {
-          Effect = "Allow"
-          Action = [
-            "route53:ChangeResourceRecordSets"
-          ]
-          Resource = "arn:aws:route53:::hostedzone/${zone_id}"
-        }
-      ],
-      [
-        {
-          Effect = "Allow"
-          Action = [
-            "route53:ListHostedZones",
-            "route53:ListResourceRecordSets"
-          ]
-          Resource = "*"
-        }
-      ]
-    )
-  })
+    Statement = [
+      {
+        Effect = "Allow"
+        Action = [
+          "route53:Get*",
+          "route53:List*",
+          "route53:Change*"
+        ]
+        Resource = "*"
+      }
+    ]
+    }
+  )
 }
+
 
 # --- Attach policies ---
 resource "aws_iam_role_policy_attachment" "externaldns_crossaccount_attach" {
