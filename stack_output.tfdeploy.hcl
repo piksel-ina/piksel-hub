@@ -39,7 +39,12 @@ publish_output "externaldns_crossaccount_role_arns" {
   value       = deployment.shared.externaldns_crossaccount_role_arns
 }
 
-publish_output "externaldns_route53_policy_arns" {
+publish_output "crossaccount_route53_policy_arns" {
   description = "Map of environment to ExternalDNS Route53 policy ARNs"
-  value       = deployment.shared.externaldns_route53_policy_arns
+  value       = deployment.shared.crossaccount_route53_policy_arns
+}
+
+publish_output "odc_cloudfront_crossaccount_role_arns" {
+  description = "Map of environment to ExternalDNS Route53 policy ARNs"
+  value       = deployment.shared.odc_cloudfront_crossaccount_role_arns
 }

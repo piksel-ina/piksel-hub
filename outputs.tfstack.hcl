@@ -215,3 +215,9 @@ output "crossaccount_route53_policy_arns" {
   type        = map(string)
   value       = component.route53.cross_account_route53_policy_policy_arns
 }
+
+output "odc_cloudfront_crossaccount_role_arns" {
+  description = "Map of environment to ODC CloudFront cross-account IAM role ARNs"
+  type        = map(string)
+  value       = component.route53.odc_cloudfront_crossaccount_role_arns
+}
