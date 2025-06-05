@@ -117,7 +117,7 @@ module "records_public" {
   records = var.public_records
 }
 
-# --- Records for subdomain public zones ---
+# --- Records for subdomain public zones (dev env) ---
 module "records_subdomain" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"
@@ -127,7 +127,7 @@ module "records_subdomain" {
   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.subdomain_name_dev]
   depends_on = [aws_route53_zone.this]
 
-  records = var.subdomain_records
+  records = var.subdomain_records_dev
 }
 
 # --- Records for subdomain public zones ---

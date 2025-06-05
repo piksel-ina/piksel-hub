@@ -87,7 +87,7 @@ variable "public_records" {
   default = []
 }
 
-variable "subdomain_records" {
+variable "subdomain_records_dev" {
   description = "Public DNS records for the main public zone"
   type = list(object({
     name    = string
@@ -161,7 +161,7 @@ variable "spoke_vpc_cidrs" {
   default     = [""]
 }
 
-variable "externaldns_trusted_accounts" {
+variable "cross_account_configs" {
   description = "List of trusted accounts and their OIDC details for ExternalDNS cross-account access"
   type = list(object({
     env                  = string
