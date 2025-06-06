@@ -32,18 +32,8 @@ deployment "shared" {
     account_ids = {
       "dev_account" = local.dev_account
     }
-    enable_records_public       = false
-    enable_records_subdomain    = false
-    enable_records_private_main = true
-    enable_records_private_dev  = true
-    enable_records_private_prod = false
-    public_records              = local.public_records
-    subdomain_records_dev       = local.subdomain_records_dev # add more for other environments if needed
-    main_private_records        = local.main_private_records
-    dev_private_records         = local.dev_private_records
-    prod_private_records        = local.prod_private_records
-    spoke_vpc_ids               = ["vpc-0895c52245cda57ec"]
-    spoke_vpc_cidrs             = ["10.1.0.0/16"]
+    spoke_vpc_ids   = ["vpc-0895c52245cda57ec"]
+    spoke_vpc_cidrs = ["10.1.0.0/16"]
     cross_account_configs = [
       {
         env                  = "dev"

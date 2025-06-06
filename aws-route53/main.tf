@@ -109,7 +109,7 @@ module "records_public" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"
 
-  create     = var.enable_records_public
+  create     = true
   zone_name  = var.domain_name
   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.domain_name]
   depends_on = [aws_route53_zone.this]
@@ -117,12 +117,12 @@ module "records_public" {
   records = var.public_records
 }
 
-# --- Records for subdomain public zones (dev env) ---
-module "records_subdomain" {
+# --- Records for subdomain public zones (dev) ---
+module "records_subdomain_dev" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"
 
-  create     = var.enable_records_subdomain
+  create     = true
   zone_name  = var.subdomain_name_dev
   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.subdomain_name_dev]
   depends_on = [aws_route53_zone.this]
@@ -135,7 +135,7 @@ module "records_private_main" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"
 
-  create     = var.enable_records_private_main
+  create     = true
   zone_name  = var.private_domain_name_hub
   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_hub]
   depends_on = [aws_route53_zone.this]
@@ -148,7 +148,7 @@ module "records_private_dev" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"
 
-  create     = var.enable_records_private_dev
+  create     = true
   zone_name  = var.private_domain_name_dev
   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_dev]
   depends_on = [aws_route53_zone.this]
@@ -160,7 +160,7 @@ module "records_private_prod" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"
 
-  create     = var.enable_records_private_prod
+  create     = true
   zone_name  = var.private_domain_name_prod
   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_prod]
   depends_on = [aws_route53_zone.this]
@@ -198,29 +198,29 @@ module "inbound_resolver_endpoint" {
 }
 
 # --- OUTBOUND RESOLVER ENDPOINT ---
-module "outbound_resolver_endpoint" {
-  source  = "terraform-aws-modules/route53/aws//modules/resolver-endpoints"
-  version = "~> 5.0"
+# module "outbound_resolver_endpoint" {
+#   source  = "terraform-aws-modules/route53/aws//modules/resolver-endpoints"
+#   version = "~> 5.0"
 
-  create    = var.create_outbound_resolver_endpoint
-  name      = "${local.prefix}-outbound-resolver"
-  direction = "OUTBOUND"
-  vpc_id    = var.vpc_id_shared
+#   create    = var.create_outbound_resolver_endpoint
+#   name      = "${local.prefix}-outbound-resolver"
+#   direction = "OUTBOUND"
+#   vpc_id    = var.vpc_id_shared
 
-  protocols = ["Do53"]
+#   protocols = ["Do53"]
 
-  ip_address = [
-    { subnet_id = var.private_subnets[0] },
-    { subnet_id = var.private_subnets[1] }
-  ]
+#   ip_address = [
+#     { subnet_id = var.private_subnets[0] },
+#     { subnet_id = var.private_subnets[1] }
+#   ]
 
-  # Create the security group
-  create_security_group              = true
-  security_group_name                = "${local.prefix}-resolver-outbound-sg"
-  security_group_description         = "Allow DNS queries from Outbound Resolver Endpoint for ${var.project}"
-  security_group_ingress_cidr_blocks = [var.vpc_cidr_block_shared]
+#   # Create the security group
+#   create_security_group              = true
+#   security_group_name                = "${local.prefix}-resolver-outbound-sg"
+#   security_group_description         = "Allow DNS queries from Outbound Resolver Endpoint for ${var.project}"
+#   security_group_ingress_cidr_blocks = [var.vpc_cidr_block_shared]
 
-  tags                = merge(local.tags, { Name = "${local.prefix}-outbound-resolver" })
-  security_group_tags = merge(local.tags, { Name = "${local.prefix}-resolver-outbound-sg" })
-}
+#   tags                = merge(local.tags, { Name = "${local.prefix}-outbound-resolver" })
+#   security_group_tags = merge(local.tags, { Name = "${local.prefix}-resolver-outbound-sg" })
+# }
 

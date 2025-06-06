@@ -46,36 +46,6 @@ variable "vpc_id_shared" {
 }
 
 # --- Records Variables ---
-variable "enable_records_public" {
-  description = "Enable public DNS records for the main public zone"
-  type        = bool
-  default     = false
-}
-
-variable "enable_records_subdomain" {
-  description = "Enable public DNS records for the app subdomain"
-  type        = bool
-  default     = false
-}
-
-variable "enable_records_private_main" {
-  description = "Enable public DNS records for the main private zone"
-  type        = bool
-  default     = false
-}
-
-variable "enable_records_private_dev" {
-  description = "Enable private DNS records for the dev environment"
-  type        = bool
-  default     = false
-}
-
-variable "enable_records_private_prod" {
-  description = "Enable private DNS records for the dev environment"
-  type        = bool
-  default     = false
-}
-
 variable "public_records" {
   description = "Public DNS records for the main public zone"
   type = list(object({
