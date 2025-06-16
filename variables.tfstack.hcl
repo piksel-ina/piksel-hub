@@ -89,17 +89,17 @@ variable "enable_records_private_main" {
   default     = false
 }
 
-variable "enable_records_private_dev" {
-  description = "Enable private DNS records for the dev environment"
-  type        = bool
-  default     = false
-}
+# variable "enable_records_private_dev" {
+#   description = "Enable private DNS records for the dev environment"
+#   type        = bool
+#   default     = false
+# }
 
-variable "enable_records_private_prod" {
-  description = "Enable private DNS records for the dev environment"
-  type        = bool
-  default     = false
-}
+# variable "enable_records_private_prod" {
+#   description = "Enable private DNS records for the dev environment"
+#   type        = bool
+#   default     = false
+# }
 
 # --- Other Account/Environment Variables ---
 variable "spoke_vpc_cidrs" {
@@ -151,27 +151,27 @@ variable main_private_records {
   default = []
 }
 
-variable dev_private_records {
-  description = "Public DNS records for the main public zone"
-  type = list(object({
-    name    = string
-    type    = string
-    ttl     = number
-    records = list(string)
-  }))
-  default = []
-}
+# variable dev_private_records {
+#   description = "Public DNS records for the main public zone"
+#   type = list(object({
+#     name    = string
+#     type    = string
+#     ttl     = number
+#     records = list(string)
+#   }))
+#   default = []
+# }
 
-variable prod_private_records {
-  description = "Public DNS records for the main public zone"
-  type = list(object({
-    name    = string
-    type    = string
-    ttl     = number
-    records = list(string)
-  }))
-  default = []
-}
+# variable prod_private_records {
+#   description = "Public DNS records for the main public zone"
+#   type = list(object({
+#     name    = string
+#     type    = string
+#     ttl     = number
+#     records = list(string)
+#   }))
+#   default = []
+# }
 
 
 variable "cross_account_configs" {

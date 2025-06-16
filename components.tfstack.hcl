@@ -46,8 +46,8 @@ component "phz_vpc_associate" {
   source = "./aws-route53-association"
 
   for_each = {
-    1 = component.route53.zone_ids["piksel.internal"],
-    2 = component.route53.zone_ids["dev.piksel.internal"]
+    1 = component.route53.zone_ids["piksel.internal"]
+    # 2 = component.route53.zone_ids["dev.piksel.internal"]
   }
 
   inputs = {

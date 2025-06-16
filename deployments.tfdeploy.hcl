@@ -41,7 +41,7 @@ deployment "shared" {
         oidc_provider_url    = "https://oidc.eks.ap-southeast-3.amazonaws.com/id/16FD8104D1222A76F1B32AFED808D9BF"
         namespace            = "aws-external-dns-helm"
         service_account_name = "externaldns"
-        hosted_zone_names    = ["dev.pik-sel.id", "dev.piksel.internal"]
+        hosted_zone_names    = ["dev.pik-sel.id"]
       }
     ]
   }

@@ -33,31 +33,31 @@ locals {
       }
     }
 
-    "${var.private_domain_name_dev}" = {
-      domain_name = var.private_domain_name_dev
-      comment     = "Private zone for ${var.private_domain_name_dev}"
-      vpc = [
-        {
-          vpc_id = var.vpc_id_shared
-        }
-      ]
-      tags = {
-        Name = var.private_domain_name_dev
-      }
-    }
+    # "${var.private_domain_name_dev}" = {
+    #   domain_name = var.private_domain_name_dev
+    #   comment     = "Private zone for ${var.private_domain_name_dev}"
+    #   vpc = [
+    #     {
+    #       vpc_id = var.vpc_id_shared
+    #     }
+    #   ]
+    #   tags = {
+    #     Name = var.private_domain_name_dev
+    #   }
+    # }
 
-    "${var.private_domain_name_prod}" = {
-      domain_name = var.private_domain_name_prod
-      comment     = "Private zone for ${var.private_domain_name_prod}"
-      vpc = [
-        {
-          vpc_id = var.vpc_id_shared
-        }
-      ]
-      tags = {
-        Name = var.private_domain_name_dev
-      }
-    }
+    # "${var.private_domain_name_prod}" = {
+    #   domain_name = var.private_domain_name_prod
+    #   comment     = "Private zone for ${var.private_domain_name_prod}"
+    #   vpc = [
+    #     {
+    #       vpc_id = var.vpc_id_shared
+    #     }
+    #   ]
+    #   tags = {
+    #     Name = var.private_domain_name_dev
+    #   }
+    # }
   }
 
   prefix = "${lower(var.project)}-${lower(var.environment)}"
@@ -130,7 +130,7 @@ module "records_subdomain_dev" {
   records = var.subdomain_records_dev
 }
 
-# --- Records for subdomain public zones ---
+# --- Records for private zones ---
 module "records_private_main" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 5.0"
@@ -143,30 +143,31 @@ module "records_private_main" {
   records = var.main_private_records
 }
 
-# --- Records for private zones ---
-module "records_private_dev" {
-  source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "~> 5.0"
+# # --- Records for private zones - dev ---
+# module "records_private_dev" {
+#   source  = "terraform-aws-modules/route53/aws//modules/records"
+#   version = "~> 5.0"
 
-  create     = true
-  zone_name  = var.private_domain_name_dev
-  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_dev]
-  depends_on = [aws_route53_zone.this]
+#   create     = true
+#   zone_name  = var.private_domain_name_dev
+#   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_dev]
+#   depends_on = [aws_route53_zone.this]
 
-  records = var.dev_private_records
-}
+#   records = var.dev_private_records
+# }
 
-module "records_private_prod" {
-  source  = "terraform-aws-modules/route53/aws//modules/records"
-  version = "~> 5.0"
+# # --- Records for private zones - prod ---
+# module "records_private_prod" {
+#   source  = "terraform-aws-modules/route53/aws//modules/records"
+#   version = "~> 5.0"
 
-  create     = true
-  zone_name  = var.private_domain_name_prod
-  zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_prod]
-  depends_on = [aws_route53_zone.this]
+#   create     = true
+#   zone_name  = var.private_domain_name_prod
+#   zone_id    = { for k, v in aws_route53_zone.this : k => v.zone_id }[var.private_domain_name_prod]
+#   depends_on = [aws_route53_zone.this]
 
-  records = var.prod_private_records
-}
+#   records = var.prod_private_records
+# }
 
 # --- INBOUND RESOLVER ENDPOINT ---
 module "inbound_resolver_endpoint" {
