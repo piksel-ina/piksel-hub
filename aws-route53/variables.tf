@@ -18,12 +18,12 @@ variable "environment" {
 # --- Hostname Variables ---
 variable "domain_name" {
   type    = string
-  default = "piksel.big.go.id"
+  default = "pik-sel.id"
 }
 
 variable "subdomain_name_dev" {
   type    = string
-  default = "dev.piksel.big.go.id"
+  default = "dev.pik-sel.id"
 }
 
 variable "private_domain_name_hub" {
