@@ -64,6 +64,15 @@ component "phz_vpc_associate" {
   depends_on = [component.route53]
 }
 
+removed {
+  source = "./aws-route53-association"
+  from   = component.phz_vpc_associate["2"]
+
+  providers = {
+    aws = provider.aws.configurations
+  }
+}
+
 component "tgw" {
   source = "./aws-tgw"
 
