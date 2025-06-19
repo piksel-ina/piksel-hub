@@ -58,6 +58,12 @@ locals {
     #     Name = var.private_domain_name_dev
     #   }
     # }
+
+    # Extract subdomain zones from zones_config
+  }
+  subdomain_zones = {
+    for k, v in local.zones_config : k => v
+    if k != var.domain_name && !contains(keys(v), "vpc") # Only public subdomains
   }
 
   prefix = "${lower(var.project)}-${lower(var.environment)}"
@@ -104,6 +110,7 @@ resource "aws_route53_zone" "this" {
 
 }
 
+
 # --- Records for main public zones ---
 module "records_public" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
@@ -115,6 +122,27 @@ module "records_public" {
   depends_on = [aws_route53_zone.this]
 
   records = var.public_records
+}
+
+# --- Data sources for all subdomain zones --
+data "aws_route53_zone" "subdomains" {
+  for_each = local.subdomain_zones
+
+  name       = each.key
+  depends_on = [aws_route53_zone.this]
+}
+
+# --- Create NS records for all subdomain delegations ---
+resource "aws_route53_record" "subdomain_delegations" {
+  for_each = data.aws_route53_zone.subdomains
+
+  zone_id = aws_route53_zone.this[var.domain_name].zone_id
+  name    = each.value.name
+  type    = "NS"
+  ttl     = 300
+  records = each.value.name_servers
+
+  depends_on = [aws_route53_zone.this]
 }
 
 # --- Records for subdomain public zones (dev) ---
