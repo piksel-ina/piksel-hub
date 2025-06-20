@@ -16,7 +16,7 @@ locals {
 resource "aws_iam_role" "externaldns_crossaccount" {
   for_each = { for v in var.cross_account_configs : v.env => v }
 
-  name = "externaldns-crossaccount-role-${each.key}"
+  name = "externaldns-crossaccount-role-${lower(each.key)}"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -24,17 +24,19 @@ resource "aws_iam_role" "externaldns_crossaccount" {
       {
         Effect = "Allow"
         Principal = {
-          Federated = "arn:aws:iam::${each.value.account_id}:oidc-provider/${replace(each.value.oidc_provider_url, "https://", "")}"
+          AWS = "arn:aws:iam::${each.value.account_id}:role/external-dns-irsa"
         }
-        Action = "sts:AssumeRoleWithWebIdentity"
+        Action = "sts:AssumeRole"
         Condition = {
           StringEquals = {
-            "${replace(each.value.oidc_provider_url, "https://", "")}:sub" = "system:serviceaccount:${each.value.namespace}:${each.value.service_account_name}"
+            "sts:ExternalId" = "external-dns-${lower(each.key)}"
           }
         }
       }
     ]
   })
+
+  tags = local.tags
 }
 
 # --- Generate the IAM Policy Dynamically ---
@@ -90,7 +92,7 @@ resource "aws_iam_role" "odc_cloudfront_crossaccount" {
     ]
   })
 }
-
+ 
 # --- Attach policies ---
 resource "aws_iam_role_policy_attachment" "odc_cloudfront_crossaccount_attach" {
   for_each = aws_iam_role.odc_cloudfront_crossaccount
