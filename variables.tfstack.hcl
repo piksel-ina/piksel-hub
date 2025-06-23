@@ -179,7 +179,6 @@ variable "cross_account_configs" {
   type = list(object({
     env                  = string
     account_id           = string
-    oidc_provider_url    = string
     namespace            = string
     service_account_name = string
     hosted_zone_names    = list(string)

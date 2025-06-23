@@ -24,7 +24,8 @@ resource "aws_iam_role" "externaldns_crossaccount" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::${each.value.account_id}:role/external-dns-irsa"
+          AWS = "arn:aws:iam::${each.value.account_id}:root" # temporary, until IRSA created  
+          # AWS = "arn:aws:iam::${each.value.account_id}:role/external-dns-irsa"
         }
         Action = "sts:AssumeRole"
         Condition = {

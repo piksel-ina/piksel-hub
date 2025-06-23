@@ -32,13 +32,12 @@ deployment "shared" {
     account_ids = {
       "dev_account" = local.dev_account
     }
-    spoke_vpc_ids   = ["vpc-0895c52245cda57ec"]
+    spoke_vpc_ids   = ["vpc-03f8c4d789172e39a"]
     spoke_vpc_cidrs = ["10.1.0.0/16"]
     cross_account_configs = [
       {
         env                  = "dev"
         account_id           = local.dev_account
-        oidc_provider_url    = "https://oidc.eks.ap-southeast-3.amazonaws.com/id/16FD8104D1222A76F1B32AFED808D9BF"
         namespace            = "aws-external-dns-helm"
         service_account_name = "externaldns"
         hosted_zone_names    = ["dev.pik-sel.id"]
