@@ -24,8 +24,8 @@ resource "aws_iam_role" "externaldns_crossaccount" {
       {
         Effect = "Allow"
         Principal = {
-          AWS = "arn:aws:iam::${each.value.account_id}:root" # temporary, until IRSA created  
-          # AWS = "arn:aws:iam::${each.value.account_id}:role/external-dns-irsa"
+          # AWS = "arn:aws:iam::${each.value.account_id}:root" # temporary, until IRSA created  
+          AWS = "arn:aws:iam::${each.value.account_id}:role/external-dns-irsa"
         }
         Action = "sts:AssumeRole"
         Condition = {
@@ -51,17 +51,46 @@ resource "aws_iam_policy" "cross_account_route53_policy" {
     Version = "2012-10-17"
     Statement = [
       {
+        Sid    = "AllowRoute53ListOperations"
         Effect = "Allow"
         Action = [
-          "route53:Get*",
-          "route53:List*",
-          "route53:Change*"
+          "route53:ListHostedZones",
+          "route53:ListHostedZonesByName",
+          "route53:GetChange",
+          "route53:GetHostedZoneCount"
+        ]
+        Resource = "*"
+      },
+      {
+        Sid    = "AllowSpecificHostedZoneOperations"
+        Effect = "Allow"
+        Action = [
+          "route53:GetHostedZone",
+          "route53:ListResourceRecordSets",
+          "route53:ChangeResourceRecordSets"
+        ]
+        Resource = [
+          for zone_id in each.value :
+          "arn:aws:route53:::hostedzone/${zone_id}"
+        ]
+      },
+      {
+        Sid    = "AllowHealthCheckOperations"
+        Effect = "Allow"
+        Action = [
+          "route53:CreateHealthCheck",
+          "route53:DeleteHealthCheck",
+          "route53:GetHealthCheck",
+          "route53:ListHealthChecks",
+          "route53:UpdateHealthCheck"
         ]
         Resource = "*"
       }
     ]
     }
   )
+
+  tags = local.tags
 }
 
 

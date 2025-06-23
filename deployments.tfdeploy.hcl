@@ -38,8 +38,8 @@ deployment "shared" {
       {
         env                  = "dev"
         account_id           = local.dev_account
-        namespace            = "aws-external-dns-helm"
-        service_account_name = "externaldns"
+        namespace            = "external-dns"
+        service_account_name = "external-dns-sa"
         hosted_zone_names    = ["dev.pik-sel.id"]
       }
     ]
