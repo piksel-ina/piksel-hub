@@ -1,3 +1,40 @@
+# --- Zone Configuration ---
+locals {
+  prefix = "${lower(var.project)}-${lower(var.environment)}"
+  tags   = var.default_tags
+}
+
+
+# --- INBOUND RESOLVER ENDPOINT ---
+module "inbound_resolver_endpoint" {
+  source  = "terraform-aws-modules/route53/aws//modules/resolver-endpoints"
+  version = "~> 5.0"
+
+  create    = var.create_inbound_resolver_endpoint
+  name      = "${local.prefix}-inbound-resolver"
+  direction = "INBOUND"
+  vpc_id    = var.vpc_id_shared
+
+  protocols = ["Do53"]
+
+  # Provide at least two subnets in different AZs
+  ip_address = [
+    { subnet_id = var.private_subnets[0] },
+    { subnet_id = var.private_subnets[1] }
+  ]
+
+  # Create security group
+  create_security_group              = true
+  security_group_name                = "${var.project}-resolver-inbound-sg"
+  security_group_description         = "Allow DNS queries to Inbound Resolver Endpoint for ${var.project}"
+  security_group_ingress_cidr_blocks = concat(var.spoke_vpc_cidrs, [var.vpc_cidr_block_shared])
+  security_group_egress_cidr_blocks  = ["0.0.0.0/0"]
+
+  tags                = merge(local.tags, { Name = "${var.project}-inbound-resolver" })
+  security_group_tags = merge(local.tags, { Name = "${var.project}-resolver-inbound-sg" })
+}
+
+
 locals {
   # Build a map from zone name to zone ID for easy lookup
   zone_name_to_id = {
@@ -10,6 +47,7 @@ locals {
       local.zone_name_to_id[zone_name]
     ]
   }
+  tags = var.default_tags
 }
 
 # --- Cross Account Access for External DNS ---

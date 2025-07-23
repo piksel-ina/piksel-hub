@@ -31,16 +31,6 @@ variable "private_domain_name_hub" {
   default = "piksel.internal"
 }
 
-# variable "private_domain_name_dev" {
-#   type    = string
-#   default = "dev.piksel.internal"
-# }
-
-# variable "private_domain_name_prod" {
-#   type    = string
-#   default = "prod.piksel.internal"
-# }
-
 variable "vpc_id_shared" {
   type = string
 }
@@ -78,28 +68,6 @@ variable "main_private_records" {
   }))
   default = []
 }
-
-# variable "dev_private_records" {
-#   description = "Public DNS records for the main public zone"
-#   type = list(object({
-#     name    = string
-#     type    = string
-#     ttl     = number
-#     records = list(string)
-#   }))
-#   default = []
-# }
-
-# variable "prod_private_records" {
-#   description = "Public DNS records for the main public zone"
-#   type = list(object({
-#     name    = string
-#     type    = string
-#     ttl     = number
-#     records = list(string)
-#   }))
-#   default = []
-# }
 
 # --- Inbound and Outbound Rules Variables ---
 variable "create_inbound_resolver_endpoint" {
