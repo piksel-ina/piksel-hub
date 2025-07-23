@@ -31,29 +31,3 @@ variable "github-repo" {
   default     = "piksel-core"
 }
 
-# --- Endpoints Variables ---
-
-variable "ecr_endpoint_sg_id" {
-  description = "ECR endpoint security groups"
-}
-
-variable "vpc_id_shared" {
-  description = "The ID of the VPC to associate with the security group"
-  type        = string
-}
-
-variable "region" {
-  description = "Region to deploy resources in"
-  type        = string
-  default     = "ap-southeast-3"
-}
-
-variable "private_subnet_ids" {
-  description = "Private Subnets ID"
-  type        = list(string)
-}
-
-variable "private_route_table_ids" {
-  description = "List of route table IDs"
-  type        = list(string)
-}

@@ -28,19 +28,3 @@ output "github_oidc_provider_arn" {
   value       = aws_iam_openid_connect_provider.github.arn
 }
 
-output "ecr_endpoints" {
-  description = "Details of the ECR VPC Endpoints in the Shared VPC"
-  value = {
-    "api" = {
-      id          = aws_vpc_endpoint.ecr_api.id
-      dns_entries = aws_vpc_endpoint.ecr_api.dns_entry
-      description = "ECR API VPC Endpoint in the Shared VPC"
-    }
-    "docker" = {
-      id          = aws_vpc_endpoint.ecr_dkr.id
-      dns_entries = aws_vpc_endpoint.ecr_dkr.dns_entry
-      description = "ECR Docker VPC Endpoint in the Shared VPC"
-    }
-  }
-}
-

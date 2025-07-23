@@ -36,7 +36,7 @@ module "zones" {
       }
     }
   }
-  
+
   tags = merge(var.default_tags, {
     ManagedBy = "Terraform"
   })
@@ -63,19 +63,30 @@ module "records" {
 
 # IRSA for ExternaDNS 
 module "irsa-externaldns" {
-    source = "../external-dns-irsa"
+  source = "../external-dns-irsa"
 
-    zone_ids = module.zones.route53_zone_zone_id
-    project = var.project
-    environment = var.environment
-    cross_account_configs = [
-      {
-        env                  = "staging"
-        account_id           = local.staging_account_id
-        namespace            = "external-dns"
-        service_account_name = "external-dns-sa"
-        hosted_zone_names    = ["staging.pik-sel.id"]
-      }
-    ]
-  
+  zone_ids    = module.zones.route53_zone_zone_id
+  project     = var.project
+  environment = var.environment
+  cross_account_configs = [
+    {
+      env                  = "staging"
+      account_id           = local.staging_account_id
+      namespace            = "external-dns"
+      service_account_name = "external-dns-sa"
+      hosted_zone_names    = ["staging.pik-sel.id"]
+    }
+  ]
+
+}
+
+# AWS ECR
+module "ecr" {
+  source = "../aws-ecr"
+  project                 = var.project
+  current_account_id      = module.network.account_id
+  account_ids             = {
+    "staging" = local.staging_account_id
+    }
+  default_tags            = var.default_tags
 }
