@@ -104,3 +104,19 @@ output "production_name_servers" {
   description = "Name servers for pik-sel.id"
   value       = module.zones.route53_zone_name_servers["pik-sel.id"]
 }
+
+
+output "externaldns_crossaccount_role_arns" {
+  description = "Map of environment to ExternalDNS cross-account IAM role ARNs"
+  value       = module.irsa-externaldns.externaldns_crossaccount_role_arns
+}
+
+output "cross_account_route53_policy_policy_arns" {
+  description = "Map of environment to ExternalDNS Route53 policy ARNs"
+  value       = module.irsa-externaldns.cross_account_route53_policy_policy_arns
+}
+
+output "odc_cloudfront_crossaccount_role_arns" {
+  description = "Map of environment to ODC CloudFront cross-account IAM role ARNs"
+  value       = module.irsa-externaldns.odc_cloudfront_crossaccount_role_arns
+}
