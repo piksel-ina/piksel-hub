@@ -1,7 +1,18 @@
 locals {
   prefix = "${lower(var.project)}-${lower(var.environment)}"
   tags   = var.default_tags
+
+  # Build a map from zone name to zone ID for easy lookup
+  zone_name_to_id = var.zone_ids
+  env_zone_ids = {
+    for env in var.cross_account_configs :
+    env.env => [
+      for zone_name in env.hosted_zone_names :
+      local.zone_name_to_id[zone_name]
+    ]
+  }
 }
+
 # --- Cross Account Access for External DNS ---
 resource "aws_iam_role" "externaldns_crossaccount" {
   for_each = { for v in var.cross_account_configs : v.env => v }
@@ -14,8 +25,8 @@ resource "aws_iam_role" "externaldns_crossaccount" {
       {
         Effect = "Allow"
         Principal = {
-          # AWS = "arn:aws:iam::${each.value.account_id}:root" # temporary, until IRSA created  
-          AWS = "arn:aws:iam::${each.value.account_id}:role/external-dns-irsa"
+          AWS = "arn:aws:iam::${each.value.account_id}:root" # temporary, until IRSA created  
+        #   AWS = "arn:aws:iam::${each.value.account_id}:role/external-dns-irsa"
         }
         Action = "sts:AssumeRole"
         Condition = {
@@ -121,18 +132,3 @@ resource "aws_iam_role_policy_attachment" "odc_cloudfront_crossaccount_attach" {
   policy_arn = aws_iam_policy.cross_account_route53_policy[each.key].arn
 }
 
-# --- The outputs ---
-output "externaldns_crossaccount_role_arns" {
-  description = "Map of environment to ExternalDNS cross-account IAM role ARNs"
-  value       = { for k, v in aws_iam_role.externaldns_crossaccount : k => v.arn }
-}
-
-output "cross_account_route53_policy_policy_arns" {
-  description = "Map of environment to ExternalDNS Route53 policy ARNs"
-  value       = { for k, v in aws_iam_policy.cross_account_route53_policy : k => v.arn }
-}
-
-output "odc_cloudfront_crossaccount_role_arns" {
-  description = "Map of environment to ODC CloudFront cross-account IAM role ARNs"
-  value       = { for k, v in aws_iam_role.odc_cloudfront_crossaccount : k => v.arn }
-}

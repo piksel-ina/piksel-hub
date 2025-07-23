@@ -14,6 +14,10 @@ variable "environment" {
   type        = string
 }
 
+variable "zone_ids" {
+    description = "Maps of Zone Ids"
+}
+
 variable "cross_account_configs" {
   description = "List of trusted accounts and their OIDC details for ExternalDNS cross-account access"
   type = list(object({

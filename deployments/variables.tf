@@ -68,4 +68,3 @@ variable "flow_log_retention_days" {
   type        = number
   default     = 90
 }
-

@@ -61,4 +61,21 @@ module "records" {
   depends_on = [module.zones]
 }
 
-# Add staging NS to main domain 
+# IRSA for ExternaDNS 
+module "irsa-externaldns" {
+    source = "../external-dns-irsa"
+
+    zone_ids = module.zones.route53_zone_zone_id
+    project = var.project
+    environment = var.environment
+    cross_account_configs = [
+      {
+        env                  = "staging"
+        account_id           = local.staging_account_id
+        namespace            = "external-dns"
+        service_account_name = "external-dns-sa"
+        hosted_zone_names    = ["staging.pik-sel.id"]
+      }
+    ]
+  
+}
