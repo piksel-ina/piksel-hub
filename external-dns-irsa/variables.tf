@@ -15,7 +15,7 @@ variable "environment" {
 }
 
 variable "zone_ids" {
-    description = "Maps of Zone Ids"
+  description = "Maps of Zone Ids"
 }
 
 variable "cross_account_configs" {

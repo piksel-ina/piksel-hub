@@ -160,7 +160,7 @@ resource "aws_iam_role" "odc_cloudfront_crossaccount" {
     ]
   })
 }
- 
+
 # --- Attach policies ---
 resource "aws_iam_role_policy_attachment" "odc_cloudfront_crossaccount_attach" {
   for_each = aws_iam_role.odc_cloudfront_crossaccount

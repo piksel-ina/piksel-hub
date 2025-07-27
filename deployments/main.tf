@@ -1,5 +1,6 @@
 locals {
   staging_account_id = "326641642924"
+  dev_account_id     = "236122835646"
 }
 
 # VPC and other network component
@@ -82,30 +83,32 @@ module "irsa-externaldns" {
 
 # AWS ECR
 module "ecr" {
-  source = "../aws-ecr"
-  project                 = var.project
-  current_account_id      = module.network.account_id
-  account_ids             = {
+  source             = "../aws-ecr"
+  project            = var.project
+  current_account_id = module.network.account_id
+  account_ids = {
+    "dev"     = local.dev_account_id
     "staging" = local.staging_account_id
-    }
-  default_tags            = var.default_tags
+  }
+  default_tags = var.default_tags
 }
 
 # ECR VPC Endpoints
 module "ecr_endpoints" {
   source = "../aws-ecr-endpoints"
-  
-  project                   = var.project
-  current_account_id        = module.network.account_id
-  account_ids              = {
+
+  project            = var.project
+  current_account_id = module.network.account_id
+  account_ids = {
+    "dev"     = local.dev_account_id
     "staging" = local.staging_account_id
   }
-  default_tags             = var.default_tags
-  
-  vpc_id_shared            = module.network.vpc_id
-  region                   = var.aws_region
-  private_subnet_ids       = module.network.private_subnets
-  private_route_table_ids  = module.network.private_route_table_ids
-  vpc_cidr                 = var.vpc_cidr
-  spoke_vpc_cidrs          = ["10.2.0.0/16"]
+  default_tags = var.default_tags
+
+  vpc_id_shared           = module.network.vpc_id
+  region                  = var.aws_region
+  private_subnet_ids      = module.network.private_subnets
+  private_route_table_ids = module.network.private_route_table_ids
+  vpc_cidr                = var.vpc_cidr
+  spoke_vpc_cidrs         = ["10.2.0.0/16"]
 }

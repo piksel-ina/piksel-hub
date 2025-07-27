@@ -1,9 +1,9 @@
 # --- VPC Endpoints for ECR in Shared Account VPC ---
 resource "aws_vpc_endpoint" "ecr_api" {
-  vpc_id             = var.vpc_id_shared
-  service_name       = "com.amazonaws.${var.region}.ecr.api"
-  vpc_endpoint_type  = "Interface"
-  subnet_ids         = var.private_subnet_ids
+  vpc_id            = var.vpc_id_shared
+  service_name      = "com.amazonaws.${var.region}.ecr.api"
+  vpc_endpoint_type = "Interface"
+  subnet_ids        = var.private_subnet_ids
 
   private_dns_enabled = true # Relies on Route 53 Resolver for cross-account DNS resolution
 
@@ -14,11 +14,11 @@ resource "aws_vpc_endpoint" "ecr_api" {
 
 # --- ECR Docker Endpoint ---
 resource "aws_vpc_endpoint" "ecr_dkr" {
-  vpc_id             = var.vpc_id_shared
-  service_name       = "com.amazonaws.${var.region}.ecr.dkr"
-  vpc_endpoint_type  = "Interface"
-  subnet_ids         = var.private_subnet_ids
-  security_group_ids = [module.ecr_endpoint_sg.security_group_id]
+  vpc_id              = var.vpc_id_shared
+  service_name        = "com.amazonaws.${var.region}.ecr.dkr"
+  vpc_endpoint_type   = "Interface"
+  subnet_ids          = var.private_subnet_ids
+  security_group_ids  = [module.ecr_endpoint_sg.security_group_id]
   private_dns_enabled = true
 
   tags = merge(var.default_tags, {
