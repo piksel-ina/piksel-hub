@@ -112,3 +112,31 @@ module "ecr_endpoints" {
   vpc_cidr                = var.vpc_cidr
   spoke_vpc_cidrs         = ["10.2.0.0/16"]
 }
+
+########################################################
+#######    Other Records Go here   ##################### 
+########################################################
+
+# Github Pages Records for staging 
+module "gh_page_records_staging" {
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 3.0"
+
+  zone_id = module.zones.route53_zone_zone_id["staging.pik-sel.id"]
+
+  records = [
+    {
+      name    = ""
+      type    = "A"
+      ttl     = 300
+      records = [
+        "185.199.108.153",
+        "185.199.109.153", 
+        "185.199.110.153",
+        "185.199.111.153"
+      ]
+    }
+  ]
+
+  depends_on = [module.zones]
+}
