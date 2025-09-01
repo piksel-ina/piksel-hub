@@ -135,6 +135,13 @@ module "gh_page_records_staging" {
         "185.199.110.153",
         "185.199.111.153"
       ]
+    },
+    # Add CNAME for www subdomain
+    {
+      name    = "www"
+      type    = "CNAME"
+      ttl     = 300
+      records = ["staging.pik-sel.id"]
     }
   ]
 
