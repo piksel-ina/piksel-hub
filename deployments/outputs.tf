@@ -1,72 +1,7 @@
 # --- Data Source ---
 output "account_id" {
   description = "The AWS account ID"
-  value       = module.network.account_id
-}
-
-# --- VPC Outputs ---
-output "vpc_id" {
-  description = "ID of the VPC"
-  value       = module.network.vpc_id
-}
-
-output "vpc_cidr_block" {
-  description = "CIDR block of the VPC"
-  value       = module.network.vpc_cidr_block
-}
-
-# --- Subnet Outputs ---
-output "public_subnets" {
-  description = "List of IDs of public subnets"
-  value       = module.network.public_subnets
-}
-
-output "public_subnets_cidr_blocks" {
-  description = "List of CIDR blocks of public subnets"
-  value       = module.network.public_subnets_cidr_blocks
-}
-
-output "private_subnets" {
-  description = "List of IDs of private subnets"
-  value       = module.network.private_subnets
-}
-
-output "private_subnets_cidr_blocks" {
-  description = "List of CIDR blocks of private subnets"
-  value       = module.network.private_subnets_cidr_blocks
-}
-
-# --- NAT Gateway Outputs ---
-output "natgw_ids" {
-  description = "List of NAT Gateway IDs"
-  value       = module.network.natgw_ids
-}
-
-output "nat_public_ips" {
-  description = "List of NAT Gateway IDs"
-  value       = module.network.nat_public_ips
-}
-
-# --- Route Table Outputs ---
-output "public_route_table_ids" {
-  description = "List of IDs of public route tables"
-  value       = module.network.public_route_table_ids
-}
-
-output "private_route_table_ids" {
-  description = "List of IDs of private route tables"
-  value       = module.network.private_route_table_ids
-}
-
-# --- Flow Logs Outputs ---
-output "vpc_flow_log_id" {
-  description = "ID of the VPC Flow Log (if enabled)"
-  value       = module.network.vpc_flow_log_id
-}
-
-output "vpc_flow_log_cloudwatch_iam_role_arn" {
-  description = "ARN of the CloudWatch Log Group for Flow Logs (if enabled)"
-  value       = module.network.vpc_flow_log_cloudwatch_iam_role_arn
+  value       = data.aws_caller_identity.current.account_id
 }
 
 # --- Outputs for the zones ---

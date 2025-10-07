@@ -3,22 +3,10 @@ locals {
   dev_account_id     = "236122835646"
 }
 
-# VPC and other network component
-module "network" {
-  source = "../aws-vpc"
 
-  project                 = var.project
-  environment             = var.environment
-  vpc_cidr                = var.vpc_cidr
-  az_count                = var.az_count
-  single_nat_gateway      = var.single_nat_gateway
-  one_nat_gateway_per_az  = var.one_nat_gateway_per_az
-  enable_flow_log         = var.enable_flow_log
-  flow_log_retention_days = var.flow_log_retention_days
-  default_tags            = var.default_tags
-}
+# --- Route 53 Setup ---
 
-# Route 53 zone for staging
+# Route 53 Hosted Zones
 module "zones" {
   source  = "terraform-aws-modules/route53/aws//modules/zones"
   version = "~> 3.0"
@@ -62,61 +50,6 @@ module "records" {
   depends_on = [module.zones]
 }
 
-# IRSA for ExternaDNS 
-module "irsa-externaldns" {
-  source = "../external-dns-irsa"
-
-  zone_ids    = module.zones.route53_zone_zone_id
-  project     = var.project
-  environment = var.environment
-  cross_account_configs = [
-    {
-      env                  = "staging"
-      account_id           = local.staging_account_id
-      namespace            = "external-dns"
-      service_account_name = "external-dns-sa"
-      hosted_zone_names    = ["staging.pik-sel.id"]
-    }
-  ]
-
-}
-
-# AWS ECR
-module "ecr" {
-  source             = "../aws-ecr"
-  project            = var.project
-  current_account_id = module.network.account_id
-  account_ids = {
-    "dev"     = local.dev_account_id
-    "staging" = local.staging_account_id
-  }
-  default_tags = var.default_tags
-}
-
-# ECR VPC Endpoints
-module "ecr_endpoints" {
-  source = "../aws-ecr-endpoints"
-
-  project            = var.project
-  current_account_id = module.network.account_id
-  account_ids = {
-    "dev"     = local.dev_account_id
-    "staging" = local.staging_account_id
-  }
-  default_tags = var.default_tags
-
-  vpc_id_shared           = module.network.vpc_id
-  region                  = var.aws_region
-  private_subnet_ids      = module.network.private_subnets
-  private_route_table_ids = module.network.private_route_table_ids
-  vpc_cidr                = var.vpc_cidr
-  spoke_vpc_cidrs         = ["10.2.0.0/16"]
-}
-
-########################################################
-#######    Other Records Go here   ##################### 
-########################################################
-
 # Github Pages Records for staging 
 module "gh_page_records_staging" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
@@ -146,4 +79,39 @@ module "gh_page_records_staging" {
   ]
 
   depends_on = [module.zones]
+}
+
+# IRSA for ExternaDNS 
+module "irsa-externaldns" {
+  source = "../external-dns-irsa"
+
+  zone_ids    = module.zones.route53_zone_zone_id
+  project     = var.project
+  environment = var.environment
+  cross_account_configs = [
+    {
+      env                  = "staging"
+      account_id           = local.staging_account_id
+      namespace            = "external-dns"
+      service_account_name = "external-dns-sa"
+      hosted_zone_names    = ["staging.pik-sel.id"]
+    }
+  ]
+
+}
+
+# --- ECR Setup ---
+
+data "aws_caller_identity" "current" {}
+
+# AWS ECR
+module "ecr" {
+  source             = "../aws-ecr"
+  project            = var.project
+  current_account_id = data.aws_caller_identity.current.account_id
+  account_ids = {
+    "dev"     = local.dev_account_id
+    "staging" = local.staging_account_id
+  }
+  default_tags = var.default_tags
 }
