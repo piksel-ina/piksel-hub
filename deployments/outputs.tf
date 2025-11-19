@@ -1,88 +1,104 @@
-# --- Data Source ---
-output "account_id" {
-  description = "The AWS account ID"
-  value       = data.aws_caller_identity.current.account_id
+# --- Account Information ---
+output "account_info" {
+  description = "AWS Account information"
+  value = {
+    current = data.aws_caller_identity.current.account_id
+    dev     = local.dev_account_id
+    staging = local.staging_account_id
+  }
 }
 
-# --- Outputs for the zones ---
-output "route53_zone_zone_id" {
-  description = "Zone ID of Route53 zones"
-  value       = module.zones.route53_zone_zone_id
+# --- Route53 Zones (All Zones) ---
+output "route53_zones" {
+  description = "All Route53 zones information"
+  value = {
+    zone_ids     = module.zones.route53_zone_zone_id
+    zone_arns    = module.zones.route53_zone_zone_arn
+    name_servers = module.zones.route53_zone_name_servers
+  }
 }
 
-output "route53_zone_zone_arn" {
-  description = "Zone ARN of Route53 zones"
-  value       = module.zones.route53_zone_zone_arn
+# --- Route53 Zones (pik-sel.id domain) ---
+output "piksel_id_zones" {
+  description = "Route53 zones for pik-sel.id domain"
+  value = {
+    production = {
+      zone_id      = module.zones.route53_zone_zone_id["pik-sel.id"]
+      name_servers = module.zones.route53_zone_name_servers["pik-sel.id"]
+      domain       = "pik-sel.id"
+    }
+    staging = {
+      zone_id      = module.zones.route53_zone_zone_id["staging.pik-sel.id"]
+      name_servers = module.zones.route53_zone_name_servers["staging.pik-sel.id"]
+      domain       = "staging.pik-sel.id"
+    }
+  }
 }
 
-output "route53_zone_name_servers" {
-  description = "Name servers of Route53 zones"
-  value       = module.zones.route53_zone_name_servers
+# --- Route53 Zones (piksel.big.go.id domain) ---
+output "piksel_big_go_id_zones" {
+  description = "Route53 zones for piksel.big.go.id domain - Delegate name servers to big.go.id"
+  value = {
+    production = {
+      zone_id      = module.zones.route53_zone_zone_id["piksel.big.go.id"]
+      name_servers = module.zones.route53_zone_name_servers["piksel.big.go.id"]
+      domain       = "piksel.big.go.id"
+    }
+    staging = {
+      zone_id      = module.zones.route53_zone_zone_id["staging.piksel.big.go.id"]
+      name_servers = module.zones.route53_zone_name_servers["staging.piksel.big.go.id"]
+      domain       = "staging.piksel.big.go.id"
+    }
+  }
 }
 
-output "staging_zone_id" {
-  description = "Zone ID for staging.pik-sel.id"
-  value       = module.zones.route53_zone_zone_id["staging.pik-sel.id"]
+# --- ExternalDNS IRSA ---
+output "externaldns_irsa" {
+  description = "ExternalDNS IRSA cross-account configuration"
+  value = {
+    role_arns            = module.irsa-externaldns.externaldns_crossaccount_role_arns
+    route53_policy_arns  = module.irsa-externaldns.cross_account_route53_policy_policy_arns
+    cloudfront_role_arns = module.irsa-externaldns.odc_cloudfront_crossaccount_role_arns
+  }
 }
 
-output "production_zone_id" {
-  description = "Zone ID for pik-sel.id"
-  value       = module.zones.route53_zone_zone_id["pik-sel.id"]
+# --- ECR Repository ---
+output "ecr_repository" {
+  description = "ECR repository information"
+  value = {
+    name = module.ecr.ecr_repository_name
+    arn  = module.ecr.ecr_repository_arn
+    url  = module.ecr.ecr_repository_url
+  }
 }
 
-output "staging_name_servers" {
-  description = "Name servers for staging.pik-sel.id"
-  value       = module.zones.route53_zone_name_servers["staging.pik-sel.id"]
+# --- IAM Roles ---
+output "iam_roles" {
+  description = "IAM roles for various services"
+  value = {
+    github_actions       = module.ecr.github_actions_role_arn
+    eks_ecr_access       = module.ecr.eks_ecr_access_role_arn
+    github_oidc_provider = module.ecr.github_oidc_provider_arn
+  }
 }
 
-output "production_name_servers" {
-  description = "Name servers for pik-sel.id"
-  value       = module.zones.route53_zone_name_servers["pik-sel.id"]
+# --- Delegation Instructions (Human-readable) ---
+output "delegation_instructions" {
+  description = "NS records to delegate to parent domains"
+  value = {
+    "piksel.big.go.id" = {
+      message      = "Contact big.go.id administrator to create NS records"
+      parent_zone  = "big.go.id"
+      record_name  = "piksel"
+      record_type  = "NS"
+      name_servers = module.zones.route53_zone_name_servers["piksel.big.go.id"]
+    }
+    "staging.piksel.big.go.id" = {
+      message      = "Automatically delegated within piksel.big.go.id zone"
+      parent_zone  = "piksel.big.go.id"
+      record_name  = "staging"
+      record_type  = "NS"
+      name_servers = module.zones.route53_zone_name_servers["staging.piksel.big.go.id"]
+    }
+  }
 }
-
-
-output "externaldns_crossaccount_role_arns" {
-  description = "Map of environment to ExternalDNS cross-account IAM role ARNs"
-  value       = module.irsa-externaldns.externaldns_crossaccount_role_arns
-}
-
-output "cross_account_route53_policy_policy_arns" {
-  description = "Map of environment to ExternalDNS Route53 policy ARNs"
-  value       = module.irsa-externaldns.cross_account_route53_policy_policy_arns
-}
-
-output "odc_cloudfront_crossaccount_role_arns" {
-  description = "Map of environment to ODC CloudFront cross-account IAM role ARNs"
-  value       = module.irsa-externaldns.odc_cloudfront_crossaccount_role_arns
-}
-
-output "ecr_repository_name" {
-  description = "Name of the ECR repository"
-  value       = module.ecr.ecr_repository_name
-}
-
-output "ecr_repository_arn" {
-  description = "ARN of the ECR repository"
-  value       = module.ecr.ecr_repository_arn
-}
-
-output "ecr_repository_url" {
-  description = "URL of the ECR repository for Docker push/pull"
-  value       = module.ecr.ecr_repository_url
-}
-
-output "github_actions_role_arn" {
-  description = "ARN of the IAM role for GitHub Actions"
-  value       = module.ecr.github_actions_role_arn
-}
-
-output "eks_ecr_access_role_arn" {
-  description = "ARN of the IAM role for EKS ECR access"
-  value       = module.ecr.eks_ecr_access_role_arn
-}
-
-output "github_oidc_provider_arn" {
-  description = "ARN of the OIDC provider for GitHub Actions"
-  value       = module.ecr.github_oidc_provider_arn
-}
-
