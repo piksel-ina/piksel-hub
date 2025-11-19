@@ -23,6 +23,18 @@ module "zones" {
       tags = {
         Environment = "production"
       }
+    },
+    "piksel.big.go.id" = {
+      comment = "piksel.big.go.id main domain"
+      tags = {
+        Environment = "production"
+      }
+    },
+    "staging.piksel.big.go.id" = {
+      comment = "piksel.big.go.id staging domain"
+      tags = {
+        Environment = "staging"
+      }
     }
   }
 
@@ -46,6 +58,24 @@ module "records" {
       records = module.zones.route53_zone_name_servers["staging.pik-sel.id"]
     }
   ]
+  depends_on = [module.zones]
+}
+
+# Create NS record in parent domain for staging subdomain in piksel.big.go.id
+module "records_staging_big" {
+  source  = "terraform-aws-modules/route53/aws//modules/records"
+  version = "~> 3.0"
+
+  zone_id = module.zones.route53_zone_zone_id["piksel.big.go.id"]
+
+  records = [
+    {
+      name    = "staging"
+      type    = "NS"
+      ttl     = 300
+      records = module.zones.route53_zone_name_servers["staging.piksel.big.go.id"]
+    }
+  ]
 
   depends_on = [module.zones]
 }
@@ -59,12 +89,12 @@ module "gh_page_records_staging" {
 
   records = [
     {
-      name    = ""
-      type    = "A"
-      ttl     = 300
+      name = ""
+      type = "A"
+      ttl  = 300
       records = [
         "185.199.108.153",
-        "185.199.109.153", 
+        "185.199.109.153",
         "185.199.110.153",
         "185.199.111.153"
       ]
@@ -94,10 +124,9 @@ module "irsa-externaldns" {
       account_id           = local.staging_account_id
       namespace            = "external-dns"
       service_account_name = "external-dns-sa"
-      hosted_zone_names    = ["staging.pik-sel.id"]
+      hosted_zone_names    = ["staging.pik-sel.id", "staging.piksel.big.go.id"]
     }
   ]
-
 }
 
 # --- ECR Setup ---
