@@ -144,3 +144,94 @@ module "ecr" {
   }
   default_tags = var.default_tags
 }
+
+# --- Cognito Setup ---
+
+# ACM Certificate for Cognito Custom Domain (Must be in us-east-1)
+resource "aws_acm_certificate" "cognito_cert" {
+  provider          = aws.us_east_1
+  domain_name       = var.auth_domain
+  validation_method = "DNS"
+
+  tags = merge(var.default_tags, {
+    Name = "cognito-auth-domain-cert"
+  })
+}
+
+# DNS Validation Record for ACM (in the parent zone)
+# Assuming auth.piksel.big.go.id is a subdomain of piksel.big.go.id
+resource "aws_route53_record" "cognito_cert_validation" {
+  for_each = {
+    for dvo in aws_acm_certificate.cognito_cert.domain_validation_options : dvo.domain_name => {
+      name   = dvo.resource_record_name
+      record = dvo.resource_record_value
+      type   = dvo.resource_record_type
+    }
+  }
+
+  allow_overwrite = true
+  name            = each.value.name
+  records         = [each.value.record]
+  ttl             = 60
+  type            = each.value.type
+  zone_id         = module.zones.route53_zone_zone_id["piksel.big.go.id"]
+}
+
+# ACM Certificate Validation
+resource "aws_acm_certificate_validation" "cognito_cert" {
+  provider                = aws.us_east_1
+  certificate_arn         = aws_acm_certificate.cognito_cert.arn
+  validation_record_fqdns = [for record in aws_route53_record.cognito_cert_validation : record.fqdn]
+}
+
+# Placeholder A record
+resource "aws_route53_record" "piksel_root" {
+  zone_id = module.zones.route53_zone_zone_id["piksel.big.go.id"]
+  name    = "piksel.big.go.id"
+  type    = "A"
+  ttl     = 300
+  records = ["127.0.0.1"]
+}
+
+# Cognito User Pool Module
+module "cognito_user_pool" {
+  source = "../aws-cognito-user-pool"
+
+  user_pool_name  = "piksel-users"
+  domain          = var.auth_domain
+  certificate_arn = aws_acm_certificate.cognito_cert.arn
+
+  clients = [
+    {
+      name                 = "argo-workflows-staging"
+      allowed_oauth_flows  = ["code"]
+      allowed_oauth_scopes = ["email", "openid", "profile"]
+      callback_urls        = ["https://argo.staging.piksel.big.go.id/oauth2/callback"]
+      logout_urls          = ["https://argo.staging.piksel.big.go.id/"]
+    },
+    {
+      name                 = "jupyterhub-staging"
+      allowed_oauth_flows  = ["code"]
+      allowed_oauth_scopes = ["email", "openid", "profile"]
+      callback_urls        = ["https://sandbox.staging.piksel.big.go.id/hub/oauth_callback"]
+      logout_urls          = ["https://sandbox.staging.piksel.big.go.id/"]
+    }
+  ]
+
+  tags = var.default_tags
+
+  depends_on = [aws_route53_record.piksel_root]
+}
+
+# DNS Record for Custom Domain (Alias to CloudFront)
+resource "aws_route53_record" "cognito_auth_domain" {
+  zone_id = module.zones.route53_zone_zone_id["piksel.big.go.id"]
+  name    = var.auth_domain
+  type    = "A"
+
+  alias {
+    name                   = module.cognito_user_pool.domain_cloud_front_domain
+    zone_id                = module.cognito_user_pool.domain_cloud_front_zone_id
+    evaluate_target_health = false
+  }
+}

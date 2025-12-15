@@ -102,3 +102,19 @@ output "delegation_instructions" {
     }
   }
 }
+
+# --- Cognito User Pool ---
+output "cognito_user_pool_id" {
+  description = "The ID of the Cognito User Pool"
+  value       = module.cognito_user_pool.user_pool_id
+}
+
+output "cognito_user_pool_endpoint" {
+  description = "The Endpoint of the Cognito User Pool"
+  value       = module.cognito_user_pool.user_pool_endpoint
+}
+
+output "cognito_client_ids" {
+  description = "Map of Cognito Client Name to Client ID"
+  value       = module.cognito_user_pool.client_ids
+}

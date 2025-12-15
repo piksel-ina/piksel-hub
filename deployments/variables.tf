@@ -68,3 +68,10 @@ variable "flow_log_retention_days" {
   type        = number
   default     = 90
 }
+
+# --- Cognito Configuration ---
+variable "auth_domain" {
+  description = "The domain to use for Cognito Hosted UI (e.g. auth.piksel.big.go.id)"
+  type        = string
+  default     = "auth.piksel.big.go.id"
+}
