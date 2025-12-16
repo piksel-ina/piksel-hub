@@ -85,7 +85,7 @@ module "gh_page_records_staging" {
   source  = "terraform-aws-modules/route53/aws//modules/records"
   version = "~> 3.0"
 
-  zone_id = module.zones.route53_zone_zone_id["staging.pik-sel.id"]
+  zone_id = module.zones.route53_zone_zone_id["staging.piksel.big.go.id"]
 
   records = [
     {
@@ -104,7 +104,7 @@ module "gh_page_records_staging" {
       name    = "www"
       type    = "CNAME"
       ttl     = 300
-      records = ["staging.pik-sel.id"]
+      records = ["staging.piksel.big.go.id"]
     }
   ]
 
