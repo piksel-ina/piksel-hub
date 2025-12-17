@@ -90,17 +90,6 @@ resource "aws_cognito_user_pool_client" "this" {
   generate_secret = lookup(each.value, "generate_secret", false)
 }
 
-resource "aws_cognito_managed_login_branding" "this" {
-  for_each = {
-    for client in var.clients : client.name => client
-  }
-
-  client_id    = aws_cognito_user_pool_client.this[each.key].id
-  user_pool_id = aws_cognito_user_pool.this.id
-
-  use_cognito_provided_values = true
-}
-
 resource "aws_cognito_user_pool_domain" "this" {
   count                 = var.domain != "" ? 1 : 0
   domain                = var.domain
