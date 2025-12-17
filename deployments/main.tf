@@ -148,7 +148,7 @@ module "ecr" {
 # --- Cognito Setup ---
 
 # ACM Certificate for Cognito Custom Domain (Must be in us-east-1)
-resource "aws_acm_certificate" "cognito_cert" {
+resource "aws_acm_certificate" "cognito_certificate" {
   provider          = aws.us_east_1
   domain_name       = var.auth_domain
   validation_method = "DNS"
@@ -161,7 +161,7 @@ resource "aws_acm_certificate" "cognito_cert" {
 # DNS Validation Record for ACM
 resource "aws_route53_record" "cognito_cert_validation" {
   for_each = {
-    for dvo in aws_acm_certificate.cognito_cert.domain_validation_options : dvo.domain_name => {
+    for dvo in aws_acm_certificate.cognito_certificate.domain_validation_options : dvo.domain_name => {
       name   = dvo.resource_record_name
       record = dvo.resource_record_value
       type   = dvo.resource_record_type
@@ -178,8 +178,8 @@ resource "aws_route53_record" "cognito_cert_validation" {
 
 # ACM Certificate Validation
 resource "aws_acm_certificate_validation" "cognito_cert" {
-  provider                = aws.us_east_1
-  certificate_arn         = aws_acm_certificate.cognito_cert.arn
+  region                  = "us-east-1"
+  certificate_arn         = aws_acm_certificate.cognito_certificate.arn
   validation_record_fqdns = [for record in aws_route53_record.cognito_cert_validation : record.fqdn]
 }
 
@@ -198,7 +198,7 @@ module "cognito_user_pool" {
 
   user_pool_name  = "piksel-users"
   domain          = var.auth_domain
-  certificate_arn = aws_acm_certificate.cognito_cert.arn
+  certificate_arn = aws_acm_certificate.cognito_certificate.arn
 
   clients = [
     {
@@ -213,7 +213,7 @@ module "cognito_user_pool" {
     {
       name                 = "jupyterhub-staging"
       allowed_oauth_flows  = ["code"]
-      allowed_oauth_scopes = ["email", "openid", "profile"]
+      allowed_oauth_scopes = ["email", "openid", "profile", "aws.cognito.signin.user.admin"]
       callback_urls        = ["https://sandbox.staging.piksel.big.go.id/hub/oauth_callback"]
       logout_urls          = ["https://sandbox.staging.piksel.big.go.id/"]
       generate_secret      = true

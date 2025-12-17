@@ -7,12 +7,12 @@ resource "aws_cognito_user_pool" "this" {
   schema {
     attribute_data_type      = "String"
     developer_only_attribute = false
-    mutable                  = true
-    name                     = "institution"
-    required                 = false
+    mutable                  = false
+    name                     = "email"
+    required                 = true
     string_attribute_constraints {
       min_length = 1
-      max_length = 256
+      max_length = 2048
     }
   }
 
@@ -20,16 +20,12 @@ resource "aws_cognito_user_pool" "this" {
     attribute_data_type      = "String"
     developer_only_attribute = false
     mutable                  = true
-    name                     = "phone"
-    required                 = false
+    name                     = "phone_number"
+    required                 = true
     string_attribute_constraints {
       min_length = 8
       max_length = 15
     }
-  }
-
-  lambda_config {
-    pre_sign_up = aws_lambda_function.cognito_pre_signup.arn
   }
 
   password_policy {
@@ -48,6 +44,18 @@ resource "aws_cognito_user_pool" "this" {
 
   admin_create_user_config {
     allow_admin_create_user_only = false
+  }
+
+  account_recovery_setting {
+    recovery_mechanism {
+      name     = "verified_email"
+      priority = 1
+    }
+
+    recovery_mechanism {
+      name     = "verified_phone_number"
+      priority = 2
+    }
   }
 
   deletion_protection = "ACTIVE"
@@ -69,80 +77,63 @@ resource "aws_cognito_user_pool_client" "this" {
   supported_identity_providers         = ["COGNITO"]
   explicit_auth_flows                  = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
 
+  access_token_validity  = lookup(each.value, "access_token_validity", 60)
+  id_token_validity      = lookup(each.value, "id_token_validity", 60)
+  refresh_token_validity = lookup(each.value, "refresh_token_validity", 30)
+
+  token_validity_units {
+    access_token  = lookup(each.value, "access_token_unit", "minutes")
+    id_token      = lookup(each.value, "id_token_unit", "minutes")
+    refresh_token = lookup(each.value, "refresh_token_unit", "days")
+  }
+
   generate_secret = lookup(each.value, "generate_secret", false)
 }
 
+resource "aws_cognito_managed_login_branding" "this" {
+  for_each = {
+    for client in var.clients : client.name => client
+  }
+
+  client_id    = aws_cognito_user_pool_client.this[each.key].id
+  user_pool_id = aws_cognito_user_pool.this.id
+
+  use_cognito_provided_values = true
+}
+
 resource "aws_cognito_user_pool_domain" "this" {
-  count           = var.domain != "" ? 1 : 0
-  domain          = var.domain
-  certificate_arn = var.certificate_arn
-  user_pool_id    = aws_cognito_user_pool.this.id
+  count                 = var.domain != "" ? 1 : 0
+  domain                = var.domain
+  certificate_arn       = var.certificate_arn
+  user_pool_id          = aws_cognito_user_pool.this.id
+  managed_login_version = 2
 }
 
+# Admin Group
+resource "aws_cognito_user_group" "admin" {
+  name         = "admin"
+  user_pool_id = aws_cognito_user_pool.this.id
+  description  = "Administrator group with full access"
 
-# Lambda IAM role
-resource "aws_iam_role" "cognito_lambda_role" {
-  name = "cognito-pre-signup-lambda-role"
-
-  assume_role_policy = jsonencode({
-    Version = "2012-10-17"
-    Statement = [
-      {
-        Action = "sts:AssumeRole"
-        Effect = "Allow"
-        Principal = {
-          Service = "lambda.amazonaws.com"
-        }
-      }
-    ]
-  })
-
-  tags = var.default_tags
 }
 
-resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
-  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-  role       = aws_iam_role.cognito_lambda_role.name
+# Coastline Group
+resource "aws_cognito_user_group" "coastline" {
+  name         = "coastline"
+  user_pool_id = aws_cognito_user_pool.this.id
+  description  = "Data Access: EFS /data/coastlines"
 }
 
-# Create zip file from the Python script
-data "archive_file" "lambda_zip" {
-  type        = "zip"
-  output_path = "${path.module}/lambda_deployment.zip"
-
-  source {
-    content  = file("${path.module}/config/cognito_pre_signup.py")
-    filename = "index.py"
-  }
+# Moderate Users Group
+resource "aws_cognito_user_group" "moderate_users" {
+  name         = "moderate-users"
+  user_pool_id = aws_cognito_user_pool.this.id
+  description  = "Unlock jupyter medium instance"
 }
 
-# Lambda function
-resource "aws_lambda_function" "cognito_pre_signup" {
-  filename      = data.archive_file.lambda_zip.output_path
-  function_name = "cognito-pre-signup-validation"
-  role          = aws_iam_role.cognito_lambda_role.arn
-  handler       = "index.lambda_handler"
-  runtime       = "python3.11"
-  timeout       = 30
-
-  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
-
-  environment {
-    variables = {
-      LOG_LEVEL = "INFO"
-    }
-  }
-
-  tags = var.default_tags
-}
-
-data "aws_caller_identity" "current" {}
-
-# Permission for Cognito to invoke Lambda
-resource "aws_lambda_permission" "allow_cognito" {
-  statement_id  = "AllowExecutionFromCognito"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.cognito_pre_signup.function_name
-  principal     = "cognito-idp.amazonaws.com"
-  source_arn    = "arn:aws:cognito-idp:${var.aws_region}:${data.aws_caller_identity.current.account_id}:userpool/*"
+# Power Users Group
+resource "aws_cognito_user_group" "power_users" {
+  name         = "power-users"
+  user_pool_id = aws_cognito_user_pool.this.id
+  description  = "Unlock jupyter large instance"
 }
