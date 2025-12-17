@@ -74,7 +74,7 @@ output "docs_logs_bucket_name" {
 output "deployment_commands" {
   description = "Commands to deploy documentation"
   value = {
-    sync_command = "aws s3 sync ./build s3://${aws_s3_bucket.docs.id} --delete"
+    sync_command         = "aws s3 sync ./build s3://${aws_s3_bucket.docs.id} --delete"
     invalidation_command = "aws cloudfront create-invalidation --distribution-id ${aws_cloudfront_distribution.docs.id} --paths '/*'"
   }
 }

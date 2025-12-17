@@ -24,11 +24,11 @@ variable "default_tags" {
 variable "cloudfront_price_class" {
   description = "CloudFront price class"
   type        = string
-  default     = "PriceClass_100"  # US, Canada, Europe
+  default     = "PriceClass_100" # US, Canada, Europe
   validation {
     condition = contains([
       "PriceClass_All",
-      "PriceClass_200", 
+      "PriceClass_200",
       "PriceClass_100"
     ], var.cloudfront_price_class)
     error_message = "Price class must be PriceClass_All, PriceClass_200, or PriceClass_100."

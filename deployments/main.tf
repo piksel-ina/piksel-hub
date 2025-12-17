@@ -158,8 +158,7 @@ resource "aws_acm_certificate" "cognito_cert" {
   })
 }
 
-# DNS Validation Record for ACM (in the parent zone)
-# Assuming auth.piksel.big.go.id is a subdomain of piksel.big.go.id
+# DNS Validation Record for ACM
 resource "aws_route53_record" "cognito_cert_validation" {
   for_each = {
     for dvo in aws_acm_certificate.cognito_cert.domain_validation_options : dvo.domain_name => {
@@ -208,6 +207,8 @@ module "cognito_user_pool" {
       allowed_oauth_scopes = ["email", "openid", "profile"]
       callback_urls        = ["https://argo.staging.piksel.big.go.id/oauth2/callback"]
       logout_urls          = ["https://argo.staging.piksel.big.go.id/"]
+      generate_secret      = true
+
     },
     {
       name                 = "jupyterhub-staging"
@@ -215,10 +216,11 @@ module "cognito_user_pool" {
       allowed_oauth_scopes = ["email", "openid", "profile"]
       callback_urls        = ["https://sandbox.staging.piksel.big.go.id/hub/oauth_callback"]
       logout_urls          = ["https://sandbox.staging.piksel.big.go.id/"]
+      generate_secret      = true
     }
   ]
 
-  tags = var.default_tags
+  default_tags = var.default_tags
 
   depends_on = [aws_route53_record.piksel_root]
 }

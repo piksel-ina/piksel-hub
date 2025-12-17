@@ -28,6 +28,10 @@ resource "aws_cognito_user_pool" "this" {
     }
   }
 
+  lambda_config {
+    pre_sign_up = aws_lambda_function.cognito_pre_signup.arn
+  }
+
   password_policy {
     minimum_length    = 8
     require_lowercase = true
@@ -48,7 +52,7 @@ resource "aws_cognito_user_pool" "this" {
 
   deletion_protection = "ACTIVE"
 
-  tags = var.tags
+  tags = var.default_tags
 }
 
 resource "aws_cognito_user_pool_client" "this" {
@@ -64,6 +68,8 @@ resource "aws_cognito_user_pool_client" "this" {
   logout_urls                          = each.value.logout_urls
   supported_identity_providers         = ["COGNITO"]
   explicit_auth_flows                  = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
+
+  generate_secret = lookup(each.value, "generate_secret", false)
 }
 
 resource "aws_cognito_user_pool_domain" "this" {
@@ -71,4 +77,72 @@ resource "aws_cognito_user_pool_domain" "this" {
   domain          = var.domain
   certificate_arn = var.certificate_arn
   user_pool_id    = aws_cognito_user_pool.this.id
+}
+
+
+# Lambda IAM role
+resource "aws_iam_role" "cognito_lambda_role" {
+  name = "cognito-pre-signup-lambda-role"
+
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Action = "sts:AssumeRole"
+        Effect = "Allow"
+        Principal = {
+          Service = "lambda.amazonaws.com"
+        }
+      }
+    ]
+  })
+
+  tags = var.default_tags
+}
+
+resource "aws_iam_role_policy_attachment" "lambda_basic_execution" {
+  policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+  role       = aws_iam_role.cognito_lambda_role.name
+}
+
+# Create zip file from the Python script
+data "archive_file" "lambda_zip" {
+  type        = "zip"
+  output_path = "${path.module}/lambda_deployment.zip"
+
+  source {
+    content  = file("${path.module}/config/cognito_pre_signup.py")
+    filename = "index.py"
+  }
+}
+
+# Lambda function
+resource "aws_lambda_function" "cognito_pre_signup" {
+  filename      = data.archive_file.lambda_zip.output_path
+  function_name = "cognito-pre-signup-validation"
+  role          = aws_iam_role.cognito_lambda_role.arn
+  handler       = "index.lambda_handler"
+  runtime       = "python3.11"
+  timeout       = 30
+
+  source_code_hash = data.archive_file.lambda_zip.output_base64sha256
+
+  environment {
+    variables = {
+      LOG_LEVEL = "INFO"
+    }
+  }
+
+  tags = var.default_tags
+}
+
+data "aws_caller_identity" "current" {}
+
+# Permission for Cognito to invoke Lambda
+resource "aws_lambda_permission" "allow_cognito" {
+  statement_id  = "AllowExecutionFromCognito"
+  action        = "lambda:InvokeFunction"
+  function_name = aws_lambda_function.cognito_pre_signup.function_name
+  principal     = "cognito-idp.amazonaws.com"
+  source_arn    = "arn:aws:cognito-idp:${var.aws_region}:${data.aws_caller_identity.current.account_id}:userpool/*"
 }

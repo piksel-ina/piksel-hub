@@ -2,7 +2,7 @@ data "aws_caller_identity" "current" {}
 
 locals {
   hosting_bucket_name = "docs-${lower(var.project)}-${lower(var.environment)}"
-  docs_domain         = "${var.docs_domain_name}"
+  docs_domain         = var.docs_domain_name
 }
 
 # --- ACM Certificate for CloudFront (must be in us-east-1) ---
@@ -56,7 +56,7 @@ resource "aws_acm_certificate_validation" "docs" {
 # --- S3 bucket for documentation hosting ---
 resource "aws_s3_bucket" "docs" {
   bucket = local.hosting_bucket_name
-  
+
   tags = merge(var.default_tags, {
     Name = "Documentation Bucket"
   })
@@ -150,7 +150,7 @@ resource "aws_cloudfront_distribution" "docs" {
   default_root_object = "index.html"
   comment             = "Documentation distribution for ${local.docs_domain}"
   price_class         = var.cloudfront_price_class
-  
+
   aliases = [local.docs_domain]
 
   # --- Origin configuration ---
@@ -175,8 +175,8 @@ resource "aws_cloudfront_distribution" "docs" {
     viewer_protocol_policy = "redirect-to-https"
 
     # Use managed cache policy for better performance
-    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" 
-    
+    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"
+
     # Response headers policy for security
     response_headers_policy_id = "67f7725c-6f97-4210-82d7-5512b31e9d03"
 
@@ -229,7 +229,7 @@ resource "aws_cloudfront_distribution" "docs" {
     compress               = true
     viewer_protocol_policy = "redirect-to-https"
 
-    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad"  # CachingDisabled for API docs
+    cache_policy_id = "4135ea2d-6df8-44a3-9df3-4b5a84be39ad" # CachingDisabled for API docs
 
     forwarded_values {
       query_string = false
@@ -337,8 +337,8 @@ resource "aws_wafv2_web_acl" "docs" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                 = "RateLimitRule"
-      sampled_requests_enabled    = true
+      metric_name                = "RateLimitRule"
+      sampled_requests_enabled   = true
     }
   }
 
@@ -360,8 +360,8 @@ resource "aws_wafv2_web_acl" "docs" {
 
     visibility_config {
       cloudwatch_metrics_enabled = true
-      metric_name                 = "CommonRuleSetMetric"
-      sampled_requests_enabled    = true
+      metric_name                = "CommonRuleSetMetric"
+      sampled_requests_enabled   = true
     }
   }
 
@@ -371,7 +371,7 @@ resource "aws_wafv2_web_acl" "docs" {
 
   visibility_config {
     cloudwatch_metrics_enabled = true
-    metric_name                 = "DocsWAF"
-    sampled_requests_enabled    = true
+    metric_name                = "DocsWAF"
+    sampled_requests_enabled   = true
   }
 }

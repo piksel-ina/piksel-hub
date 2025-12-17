@@ -21,3 +21,7 @@ output "domain_cloud_front_domain" {
 output "domain_cloud_front_zone_id" {
   value = length(aws_cognito_user_pool_domain.this) > 0 ? aws_cognito_user_pool_domain.this[0].cloudfront_distribution_zone_id : ""
 }
+
+output "lambda_arn" {
+  value = aws_lambda_function.cognito_pre_signup.arn
+}

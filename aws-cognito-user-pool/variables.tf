@@ -1,12 +1,18 @@
+variable "aws_region" {
+  description = "Region to deploy resources in"
+  type        = string
+  default     = "ap-southeast-3"
+}
+
+variable "default_tags" {
+  description = "Default tags to apply to all resources"
+  type        = map(string)
+  default     = {}
+}
+
 variable "user_pool_name" {
   description = "Name of the Cognito User Pool"
   type        = string
-}
-
-variable "tags" {
-  description = "Tags to apply to resources"
-  type        = map(string)
-  default     = {}
 }
 
 variable "clients" {
@@ -17,6 +23,7 @@ variable "clients" {
     allowed_oauth_scopes = list(string)
     callback_urls        = list(string)
     logout_urls          = list(string)
+    generate_secret      = optional(bool, false)
   }))
   default = []
 }
