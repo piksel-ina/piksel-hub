@@ -217,6 +217,14 @@ module "cognito_user_pool" {
       callback_urls        = ["https://sandbox.staging.piksel.big.go.id/hub/oauth_callback"]
       logout_urls          = ["https://sandbox.staging.piksel.big.go.id/"]
       generate_secret      = true
+    },
+    {
+      name                 = "grafana-staging"
+      allowed_oauth_flows  = ["code"]
+      allowed_oauth_scopes = ["email", "openid", "profile"]
+      callback_urls        = ["https://grafana.staging.piksel.big.go.id/login/generic_oauth"]
+      logout_urls          = ["https://grafana.staging.piksel.big.go.id/"]
+      generate_secret      = true
     }
   ]
 
