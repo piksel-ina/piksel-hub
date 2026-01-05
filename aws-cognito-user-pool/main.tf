@@ -77,8 +77,8 @@ resource "aws_cognito_user_pool_client" "this" {
   supported_identity_providers         = ["COGNITO"]
   explicit_auth_flows                  = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
 
-  access_token_validity  = lookup(each.value, "access_token_validity", 60)
-  id_token_validity      = lookup(each.value, "id_token_validity", 60)
+  access_token_validity  = lookup(each.value, "access_token_validity", 720)
+  id_token_validity      = lookup(each.value, "id_token_validity", 720)
   refresh_token_validity = lookup(each.value, "refresh_token_validity", 30)
 
   token_validity_units {
