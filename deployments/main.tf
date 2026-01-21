@@ -142,12 +142,17 @@ module "ecr" {
   ecr_repos = {
     "piksel-core" = {
       tag_prefixes = ["odc-", "jupyter-", "dev-jupyter"]
-  } }
+    }
+    "data-production" = {
+      tag_prefixes = ["geomad"]
+    }
+  }
 
   github_org = "piksel-ina"
 
   github_repos = [
-    "piksel-core"
+    "piksel-core",
+    "Indonesia-GeoMAD"
   ]
 
   account_ids = {
