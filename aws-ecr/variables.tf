@@ -19,15 +19,21 @@ variable "default_tags" {
   default     = {}
 }
 
-variable "github-org" {
+variable "github_org" {
   description = "The Name of Github Organization to give permission on ECR access"
   type        = string
-  default     = "piksel-ina"
 }
 
-variable "github-repo" {
-  description = "The Repository name to grant ECR Access permissions"
-  type        = string
-  default     = "piksel-core"
+variable "github_repos" {
+  description = "List of GitHub repo names that can assume the ECR push role"
+  type        = list(string)
+}
+
+variable "ecr_repos" {
+  type = map(object({
+    tag_prefixes               = list(string)
+    keep_last                  = optional(number, 2)
+    expire_untagged_after_days = optional(number, 7)
+  }))
 }
 

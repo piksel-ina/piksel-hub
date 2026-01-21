@@ -63,12 +63,14 @@ output "externaldns_irsa" {
 }
 
 # --- ECR Repository ---
-output "ecr_repository" {
-  description = "ECR repository information"
+output "ecr_repositories" {
+  description = "ECR repositories information"
   value = {
-    name = module.ecr.ecr_repository_name
-    arn  = module.ecr.ecr_repository_arn
-    url  = module.ecr.ecr_repository_url
+    for repo_name in keys(module.ecr.ecr_repository_names) : repo_name => {
+      name = module.ecr.ecr_repository_names[repo_name]
+      arn  = module.ecr.ecr_repository_arns[repo_name]
+      url  = module.ecr.ecr_repository_urls[repo_name]
+    }
   }
 }
 

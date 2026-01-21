@@ -138,10 +138,23 @@ module "ecr" {
   source             = "../aws-ecr"
   project            = var.project
   current_account_id = data.aws_caller_identity.current.account_id
+
+  ecr_repos = {
+    "piksel-core" = {
+      tag_prefixes = ["odc-", "jupyter-", "dev-jupyter"]
+  } }
+
+  github_org = "piksel-ina"
+
+  github_repos = [
+    "piksel-core"
+  ]
+
   account_ids = {
     "dev"     = local.dev_account_id
     "staging" = local.staging_account_id
   }
+
   default_tags = var.default_tags
 }
 

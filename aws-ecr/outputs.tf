@@ -1,16 +1,16 @@
-output "ecr_repository_name" {
-  description = "Name of the ECR repository"
-  value       = aws_ecr_repository.this.name
+output "ecr_repository_names" {
+  description = "Map of ECR repository names"
+  value       = { for k, v in aws_ecr_repository.this : k => v.name }
 }
 
-output "ecr_repository_arn" {
-  description = "ARN of the ECR repository"
-  value       = aws_ecr_repository.this.arn
+output "ecr_repository_arns" {
+  description = "Map of ECR repository ARNs"
+  value       = { for k, v in aws_ecr_repository.this : k => v.arn }
 }
 
-output "ecr_repository_url" {
-  description = "URL of the ECR repository for Docker push/pull"
-  value       = aws_ecr_repository.this.repository_url
+output "ecr_repository_urls" {
+  description = "Map of ECR repository URLs for Docker push/pull"
+  value       = { for k, v in aws_ecr_repository.this : k => v.repository_url }
 }
 
 output "github_actions_role_arn" {
@@ -27,4 +27,3 @@ output "github_oidc_provider_arn" {
   description = "ARN of the OIDC provider for GitHub Actions"
   value       = aws_iam_openid_connect_provider.github.arn
 }
-
