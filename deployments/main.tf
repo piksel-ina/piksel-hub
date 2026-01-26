@@ -141,7 +141,7 @@ module "ecr" {
 
   ecr_repos = {
     "piksel-core" = {
-      tag_prefixes = ["odc-", "jupyter-", "dev-jupyter"]
+      tag_prefixes = ["odc-", "jupyter-", "dev-jupyter", "ows-"]
     }
     "data-production" = {
       tag_prefixes = ["geomad"]
