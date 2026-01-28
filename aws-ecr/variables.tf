@@ -24,15 +24,10 @@ variable "github_org" {
   type        = string
 }
 
-variable "github_repos" {
-  description = "List of GitHub repo names that can assume the ECR push role"
-  type        = list(string)
-}
-
 variable "ecr_repos" {
   type = map(object({
-    tag_prefixes               = list(string)
-    keep_last                  = optional(number, 2)
+    tag_prefixes               = optional(list(string), null)
+    keep_last                  = optional(number, 3)
     expire_untagged_after_days = optional(number, 7)
   }))
 }

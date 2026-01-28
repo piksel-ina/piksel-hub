@@ -7,23 +7,25 @@ locals {
   lifecycle_rules_by_repo = {
     for repo_name, repo_cfg in var.ecr_repos :
     repo_name => concat(
+      # Rule 1: Keep last N tagged images (any tag)
       [
-        for idx, pfx in repo_cfg.tag_prefixes : {
-          rulePriority = 1 + idx
-          description  = "Keep last ${try(repo_cfg.keep_last, 2)} images for tags with prefix '${pfx}'"
+        {
+          rulePriority = 1
+          description  = "Keep last ${try(repo_cfg.keep_last, 3)} tagged images"
           selection = {
-            tagStatus     = "tagged"
-            tagPrefixList = [pfx]
-            countType     = "imageCountMoreThan"
-            countNumber   = try(repo_cfg.keep_last, 2)
+            tagStatus      = "tagged"
+            tagPatternList = ["*"]
+            countType      = "imageCountMoreThan"
+            countNumber    = try(repo_cfg.keep_last, 3)
           }
           action = { type = "expire" }
         }
       ],
-      (
-        try(repo_cfg.expire_untagged_after_days, 7) > 0
-        ? [{
-          rulePriority = 90
+      # Rule 2: Expire untagged images
+      try(repo_cfg.expire_untagged_after_days, 7) > 0
+      ? [
+        {
+          rulePriority = 2
           description  = "Expire untagged images older than ${try(repo_cfg.expire_untagged_after_days, 7)} days"
           selection = {
             tagStatus   = "untagged"
@@ -32,12 +34,13 @@ locals {
             countNumber = try(repo_cfg.expire_untagged_after_days, 7)
           }
           action = { type = "expire" }
-        }]
-        : []
-      )
+        }
+      ]
+      : []
     )
   }
 }
+
 
 # --- AWS Elastic Container Registry Configurations ---
 resource "aws_ecr_repository" "this" {
@@ -84,9 +87,7 @@ resource "aws_iam_role" "github_actions" {
           "token.actions.githubusercontent.com:aud" = "sts.amazonaws.com"
         }
         StringLike = {
-          "token.actions.githubusercontent.com:sub" = [
-            for repo in var.github_repos : "repo:${var.github_org}/${repo}:*"
-          ]
+          "token.actions.githubusercontent.com:sub" = "repo:${var.github_org}/*"
         }
       }
     }]

@@ -140,20 +140,12 @@ module "ecr" {
   current_account_id = data.aws_caller_identity.current.account_id
 
   ecr_repos = {
-    "piksel-core" = {
-      tag_prefixes = ["odc-", "jupyter-", "dev-jupyter", "ows-"]
-    }
-    "data-production" = {
-      tag_prefixes = ["geomad"]
-    }
+    "piksel-core"     = { keep_last = 8 }
+    "data-production" = {}
+    "coastlines"      = {}
   }
 
   github_org = "piksel-ina"
-
-  github_repos = [
-    "piksel-core",
-    "Indonesia-GeoMAD"
-  ]
 
   account_ids = {
     "dev"     = local.dev_account_id
