@@ -143,6 +143,7 @@ module "ecr" {
     "piksel-core"     = { keep_last = 8 }
     "data-production" = {}
     "coastlines"      = {}
+    "terriamap"       = {}
   }
 
   github_org = "piksel-ina"
