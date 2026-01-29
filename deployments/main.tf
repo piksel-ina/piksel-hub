@@ -142,7 +142,7 @@ module "ecr" {
   ecr_repos = {
     "piksel-core"     = { keep_last = 8 }
     "data-production" = {}
-    "coastlines"      = {}
+    "coastlines"      = { is_mutable = true }
     "terriamap"       = {}
   }
 

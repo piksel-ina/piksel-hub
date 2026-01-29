@@ -46,7 +46,7 @@ locals {
 resource "aws_ecr_repository" "this" {
   for_each             = var.ecr_repos
   name                 = each.key
-  image_tag_mutability = "IMMUTABLE"
+  image_tag_mutability = try(each.value.is_mutable, false) ? "MUTABLE" : "IMMUTABLE"
 
   image_scanning_configuration {
     scan_on_push = true
