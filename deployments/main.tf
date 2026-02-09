@@ -145,6 +145,7 @@ module "ecr" {
     "data-production" = {}
     "coastlines"      = { is_mutable = true }
     "terriamap"       = {}
+    "ows"             = {}
   }
 
   github_org = "piksel-ina"
