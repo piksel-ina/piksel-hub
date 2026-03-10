@@ -213,6 +213,11 @@ module "cognito_user_pool" {
   domain          = var.auth_domain
   certificate_arn = aws_acm_certificate.cognito_certificate.arn
 
+  admin_email_subscriptions = [
+    "piksel@big.go.id",
+    "taufik.itk49@gmail.com",
+  ]
+
   clients = [
     {
       name                 = "argo-workflows-staging"
