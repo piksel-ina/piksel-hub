@@ -1,9 +1,3 @@
-variable "aws_region" {
-  description = "Region to deploy resources in"
-  type        = string
-  default     = "ap-southeast-3"
-}
-
 variable "default_tags" {
   description = "Default tags to apply to all resources"
   type        = map(string)
