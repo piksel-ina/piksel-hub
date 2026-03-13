@@ -43,7 +43,12 @@ resource "aws_cognito_user_pool" "this" {
   }
 
   admin_create_user_config {
-    allow_admin_create_user_only = false
+    allow_admin_create_user_only = true
+    invite_message_template {
+      email_subject = "Undangan Akun PIKSEL / PIKSEL Account Invitation"
+      email_message = file("${path.module}/config/email-invite.html")
+      sms_message   = "[PIKSEL] Halo {username}, kata sandi sementara Anda: {####}. Jangan bagikan kode ini."
+    }
   }
 
   account_recovery_setting {
@@ -126,3 +131,4 @@ resource "aws_cognito_user_group" "power_users" {
   user_pool_id = aws_cognito_user_pool.this.id
   description  = "Unlock jupyter large instance"
 }
+
