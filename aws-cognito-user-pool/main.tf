@@ -60,11 +60,6 @@ resource "aws_cognito_user_pool" "this" {
 
   deletion_protection = "ACTIVE"
 
-  lambda_config {
-    pre_sign_up       = aws_lambda_function.pre_signup.arn
-    post_confirmation = aws_lambda_function.post_confirmation.arn
-  }
-
   tags = var.default_tags
 }
 
@@ -80,7 +75,7 @@ resource "aws_cognito_user_pool_client" "this" {
   callback_urls                        = each.value.callback_urls
   logout_urls                          = each.value.logout_urls
   supported_identity_providers         = ["COGNITO"]
-  explicit_auth_flows                  = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH", "ALLOW_USER_PASSWORD_AUTH"]
+  explicit_auth_flows                  = ["ALLOW_USER_SRP_AUTH", "ALLOW_REFRESH_TOKEN_AUTH"]
 
   access_token_validity  = lookup(each.value, "access_token_validity", 720)
   id_token_validity      = lookup(each.value, "id_token_validity", 720)
@@ -130,11 +125,4 @@ resource "aws_cognito_user_group" "power_users" {
   name         = "power-users"
   user_pool_id = aws_cognito_user_pool.this.id
   description  = "Unlock jupyter large instance"
-}
-
-# Pending Approval Group
-resource "aws_cognito_user_group" "pending_approval" {
-  name         = "pending_approval"
-  user_pool_id = aws_cognito_user_pool.this.id
-  description  = "Users waiting for admin approval"
 }

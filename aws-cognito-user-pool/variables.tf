@@ -39,9 +39,3 @@ variable "certificate_arn" {
   type        = string
   default     = ""
 }
-
-variable "admin_email_subscriptions" {
-  description = "List of email addresses to subscribe to admin notifications"
-  type        = list(string)
-  default     = []
-}

@@ -19,8 +19,3 @@ local_override.tf
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
-
-# Lambda build artifacts
-**/function.zip
-**/__pycache__/
-*.pyc
